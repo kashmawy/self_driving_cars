@@ -1,6 +1,6 @@
-Algorithm Description
+# Algorithm Description
 
-The pipeline of the algorithm looks like the following:
+## The pipeline of the algorithm looks like the following:
 1. Capture the image: Capture the image that the algorithm will operate on.
 2. Grayscale: Convert the image into gray scale.
 3. Gaussian filter: Apply Gaussian filter to the image to remove noise.
@@ -10,7 +10,7 @@ The pipeline of the algorithm looks like the following:
 7. Calculate the y-max and interpolate the lines for each side: Get the maximum y coordinate of both sides and use the maximum y coordinate in both lane lines to calculate the corresponding x value (using the average slope) and then interpolate the line by connecting the line between (x value, y minimum) and (x value, y maximum).
 
 
-Parts of the pipeline where this is more likely to fail and could use enhancement:
+## Parts of the pipeline where this is more likely to fail and could use enhancement:
 4. Region of interest
   If the road has wider lanes or if the camera which captures these images is moved, the region of interest can crop the wrong part of the image removing the lane lines by mistake.
 
