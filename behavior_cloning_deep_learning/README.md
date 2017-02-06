@@ -61,24 +61,26 @@ Here is an example of a CENTER image and it's steering:
 
 ![Center Image from digital simulation with steering angle -0.2781274](IMAGES/digital_center.jpg)
 
-The following is the corresponding LEFT image and it's adjusted steering (add 0.25):
+The following is the corresponding LEFT image and it's adjusted steering (add 0.25) of -0.0281274:
 
 ![Left Image from digital simulation with steering angle -0.0281274](IMAGES/digital_left.jpg)
 
-The following is the corresponding RIGHT image and it's adjusted steering (add -0.25):
+The following is the corresponding RIGHT image and it's adjusted steering (add -0.25) of -0.5281274:
 
 ![Right Image from digital simulation with steering angle -0.5281274](IMAGES/digital_right.jpg)
 
-The following is the center image flipped with it's adjusted steering (multiply -1):
+The following is the center image flipped with it's adjusted steering (multiply -1) of 0.2781274:
 
 ![Center Image from digital simulation with steering angle 0.2781274](IMAGES/digital_center_flipped.jpg)
 
-While the analog simulator outputs only 1 image (CENTER):
-The following is an example of a CENTER image and it's steering:
+
+While the analog simulator outputs only 1 image (CENTER).
+
+The following is an example of a CENTER image and it's steering of 0:
 
 ![Center Image from analog simulation with steering angle 0](IMAGES/analog_center.jpg)
 
-The following is an example of a CENTER image flipped and it's adjusted steering (multiply -1):
+The following is an example of a CENTER image flipped and it's adjusted steering (multiply -1) of 0:
 
 ![Center Image from analog simulation with steering angle 0](IMAGES/analog_center_flipped.jpg)
 
