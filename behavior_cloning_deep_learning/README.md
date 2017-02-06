@@ -58,17 +58,33 @@ I noticed that that the autonomous driving was better by adding those layers unt
 Training has been done using both the digital and analog simulator, with a total of ~6 laps in the first track, while trying to stay in the middle of the road as much as possible.
 The digital simulator outputs 3 images (CENTER, LEFT and RIGHT).
 Here is an example of a CENTER image and it's steering:
-![Center Image from digital simulation with steering angle -0.2781274](https://github.com/kashmawy/self_driving_cars/tree/master/behavior_cloning_deep_learning/IMAGES/digital_center.jpg)
+![Center Image from digital simulation with steering angle -0.2781274](IMAGES/digital_center.jpg)
 
-The following is the corresponding LEFT image and it's adjusted steering (+0.25):
-![Left Image from digital simulation with steering angle -0.0281274](https://github.com/kashmawy/self_driving_cars/tree/master/behavior_cloning_deep_learning/IMAGES/digital_left.jpg)
+The following is the corresponding LEFT image and it's adjusted steering (add 0.25):
+![Left Image from digital simulation with steering angle -0.0281274](IMAGES/digital_left.jpg)
 
-The following is the corresponding RIGHT image and it's adjusted steering (-0.25):
-![Right Image from digital simulation with steering angle -0.5281274](https://github.com/kashmawy/self_driving_cars/tree/master/behavior_cloning_deep_learning/IMAGES/digital_right.jpg)
+The following is the corresponding RIGHT image and it's adjusted steering (add -0.25):
+![Right Image from digital simulation with steering angle -0.5281274](IMAGES/digital_right.jpg)
+
+The following is the center image flipped with it's adjusted steering (multiply -1):
+![Center Image from digital simulation with steering angle 0.2781274](IMAGES/digital_center_flipped.jpg)
 
 While the analog simulator outputs only 1 image (CENTER):
 The following is an example of a CENTER image and it's steering:
-![Center Image from analog simulation with steering angle 0](https://github.com/kashmawy/self_driving_cars/tree/master/behavior_cloning_deep_learning/IMAGES/analog_center.jpg)
+![Center Image from analog simulation with steering angle 0](IMAGES/analog_center.jpg)
+
+The following is an example of a CENTER image flipped and it's adjusted steering (multiply -1):
+![Center Image from analog simulation with steering angle 0](IMAGES/analog_center_flipped.jpg)
+
+Each image is preprocessed as described above:
+
+1. Crop 10 pixels (remove trees, etc.. which are mainly noise)
+2. Image is resized from 160x320x3 to 20x64x3
+3. The image value is normalized by dividing over 255.0 and subtracting 0.5 from the result
+
+The following shows the center image before and after the preprocessing:
+![Center Image from analog simulation before preprocessing](IMAGES/analog_center_before_preprocess.jpg)
+![Center Image from analog simulation after preprocessing](IMAGES/analog_center_after_preprocess.jpg)
 
 
 While iterating on the model, initially the car would drive off the road right after the bridge as seen in the following picture:
