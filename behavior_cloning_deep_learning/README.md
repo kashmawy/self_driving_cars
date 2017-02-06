@@ -104,6 +104,10 @@ While iterating on the model, initially the car would drive off the road right a
 In order to correct that, I positioned the car in the same orientation and location and turned the wheel toward the middle of the road while the car was standing the then started recording.
 I did this numerous times and then I retrained the model and that corrected the issue and then the car now would stay on the road.
 
+I went over all the angels from the data, and created this histogram which shows the distribution of the angels:
+
+![Angels Distribution](IMAGES/angels_histogram.png)
+
 
 ####Successful run track 1
 [![Successful run track 1](https://img.youtube.com/vi/YWx8ivuDQ7U/0.jpg)](https://youtu.be/YWx8ivuDQ7U)
