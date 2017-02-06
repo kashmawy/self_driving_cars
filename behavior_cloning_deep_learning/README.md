@@ -72,14 +72,14 @@ The following is an example of a CENTER image and it's steering:
 
 
 While iterating on the model, initially the car would drive off the road right after the bridge as seen in the following picture:
-![Car Fall Off](https://github.com/kashmawy/self_driving_cars/tree/master/behavior_cloning_deep_learning/IMAGES/car_fall_off_center.jpg)
+![Car Fall Off](IMAGES/car_fall_off_center.jpg)
 
 In order to correct that, I positioned the car in the same orientation and location and turned the wheel toward the middle of the road while the car was standing the then started recording.
 I did this numerous times and then I retrained the model and that corrected the issue and then the car now would stay on the road.
 
 
 ####Successful run track 1
-[Successful run track 1](https://youtu.be/YWx8ivuDQ7U)
+[![Successful run track 1](https://img.youtube.com/vi/YWx8ivuDQ7U/0.jpg)](https://youtu.be/YWx8ivuDQ7U)
 
 One of the important lessons I learned was the importance of clean data in large quantities to train the model so that it can effectively clone the behaviour.
 The cleaner and the more the data, the better the model was at predicting.
