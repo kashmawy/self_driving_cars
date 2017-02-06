@@ -58,21 +58,21 @@ I noticed that that the autonomous driving was better by adding those layers unt
 Training has been done using both the digital and analog simulator, with a total of ~6 laps in the first track, while trying to stay in the middle of the road as much as possible.
 The digital simulator outputs 3 images (CENTER, LEFT and RIGHT).
 Here is an example of a CENTER image and it's steering:
-![Center Image from digital simulation with steering angle -0.2781274](https://github.com/kashmawy/self_driving_cars/tree/master/behavior_cloning_deep_learning/IMAGES/digital_center.jpg "Center Image from digital simulation with steering angle -0.2781274")
+![Center Image from digital simulation with steering angle -0.2781274](/IMAGES/digital_center.jpg "Center Image from digital simulation with steering angle -0.2781274")
 
 The following is the corresponding LEFT image and it's adjusted steering (+0.25):
-![Left Image from digital simulation with steering angle -0.0281274](https://github.com/kashmawy/self_driving_cars/tree/master/behavior_cloning_deep_learning/IMAGES/digital_left.jpg "Left Image from digital simulation with steering angle -0.0281274")
+![Left Image from digital simulation with steering angle -0.0281274](/IMAGES/digital_left.jpg "Left Image from digital simulation with steering angle -0.0281274")
 
 The following is the corresponding RIGHT image and it's adjusted steering (-0.25):
-![Right Image from digital simulation with steering angle -0.5281274](https://github.com/kashmawy/self_driving_cars/tree/master/behavior_cloning_deep_learning/IMAGES/digital_right.jpg "Right Image from digital simulation with steering angle -0.5281274")
+![Right Image from digital simulation with steering angle -0.5281274](/IMAGES/digital_right.jpg "Right Image from digital simulation with steering angle -0.5281274")
 
 While the analog simulator outputs only 1 image (CENTER):
 The following is an example of a CENTER image and it's steering:
-![Center Image from analog simulation with steering angle 0](https://github.com/kashmawy/self_driving_cars/tree/master/behavior_cloning_deep_learning/IMAGES/analog_center.jpg "Center Image from analog simulation with steering angle 0")
+![Center Image from analog simulation with steering angle 0](/IMAGES/analog_center.jpg "Center Image from analog simulation with steering angle 0")
 
 
 While iterating on the model, initially the car would drive off the road right after the bridge as seen in the following picture:
-![Car Fall Off](https://github.com/kashmawy/self_driving_cars/tree/master/behavior_cloning_deep_learning/IMAGES/car_fall_off_center.jpg "Car Fall Off")
+![Car Fall Off](/IMAGES/car_fall_off_center.jpg "Car Fall Off")
 
 In order to correct that, I positioned the car in the same orientation and location and turned the wheel toward the middle of the road while the car was standing the then started recording.
 I did this numerous times and then I retrained the model and that corrected the issue and then the car now would stay on the road.
