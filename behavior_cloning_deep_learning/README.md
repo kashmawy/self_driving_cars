@@ -57,7 +57,7 @@ I noticed that that the autonomous driving was better by adding those layers unt
 ##Data
 Training has been done using both the digital and analog simulator, with a total of ~6 laps in the first track, while trying to stay in the middle of the road as much as possible.
 The digital simulator outputs 3 images (CENTER, LEFT and RIGHT).
-Here is an example of a CENTER image and it's steering:
+Here is an example of a CENTER image and it's steering of -0.2781274:
 
 ![Center Image from digital simulation with steering angle -0.2781274](IMAGES/digital_center.jpg)
 
@@ -84,7 +84,7 @@ The following is an example of a CENTER image flipped and it's adjusted steering
 
 ![Center Image from analog simulation with steering angle 0](IMAGES/analog_center_flipped.jpg)
 
-Each image is preprocessed as described above:
+Each image is preprocessed:
 
 1. Crop 10 pixels (remove trees, etc.. which are mainly noise)
 2. Image is resized from 160x320x3 to 20x64x3
@@ -92,14 +92,16 @@ Each image is preprocessed as described above:
 
 The following shows the center image before and after the preprocessing:
 
+Before preprocessing:
 ![Center Image from analog simulation before preprocessing](IMAGES/analog_center_before_preprocessing.jpg)
 
+After preprocessing:
 ![Center Image from analog simulation after preprocessing](IMAGES/analog_center_after_preprocessing.jpg)
 
 
-While iterating on the model, initially the car would drive off the road right after the bridge as seen in the following picture:
+While iterating on the model, initially the car would drive off the road right after the bridge as seen in the following video:
 
-![Car Fall Off](IMAGES/car_fall_off_center.jpg)
+[![Car fall off](https://img.youtube.com/vi/4302S0iR6bM/0.jpg)](https://youtu.be/4302S0iR6bM)
 
 In order to correct that, I positioned the car in the same orientation and location and turned the wheel toward the middle of the road while the car was standing the then started recording.
 I did this numerous times and then I retrained the model and that corrected the issue and then the car now would stay on the road.
