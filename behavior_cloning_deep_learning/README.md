@@ -2,7 +2,7 @@ Clone driving behaviour using Deep Learning
 ===
 
 
-In this project, a simulator (both analog and digital) is used to get images and steering angle while driving in track 1. Around 22k images from each angle is collected (~66k).
+In this project, a simulator (both analog and digital) is used to get images and steering angle while driving in track 1. Around 22k images from each angle is collected (~66k when including LEFT and RIGHT images too).
 This data is then preprocessed and fed into convolutional neural network to train it.
 The model is then used to predict the streering angle given an image so that it can drive the car in an autonomous fashion around the track.
 
