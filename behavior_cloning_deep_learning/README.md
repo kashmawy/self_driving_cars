@@ -35,7 +35,7 @@ The following is the model used:
 
 | Layer (type)                                     | Output Shape                     | Param # |
 | ------------------------------------------------ |:--------------------------------:|:-------:|
-| batchnormalization_1 (BatchNormalization)        | (None, 20, 64, 3)                | 80,     |
+| batchnormalization_1 (BatchNormalization)        | (None, 20, 64, 3)                | 80     |
 | convolution2d_1 (Convolution2D)                  | (None, 9, 31, 16)                | 448     |
 | convolution2d_2 (Convolution2D)                  | (None, 7, 15, 24)                | 3480    |
 | convolution2d_3 (Convolution2D)                  | (None, 5, 13, 36)                | 7812    |
