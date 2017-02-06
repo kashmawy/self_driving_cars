@@ -93,9 +93,11 @@ Each image is preprocessed:
 The following shows the center image before and after the preprocessing:
 
 Before preprocessing:
+
 ![Center Image from analog simulation before preprocessing](IMAGES/analog_center_before_preprocessing.jpg)
 
 After preprocessing:
+
 ![Center Image from analog simulation after preprocessing](IMAGES/analog_center_after_preprocessing.jpg)
 
 
