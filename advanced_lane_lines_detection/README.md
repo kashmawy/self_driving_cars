@@ -15,11 +15,6 @@ The goals / steps of this project are the following:
 * Warp the detected lane boundaries back onto the original image.
 * Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
 
-[//]: # (Image References)
-
-[image1]: ./test_images/test1.jpg "Road Slightly Right"
-[image2]: ./solutions/test_1_vs_calibrated.png "Image Calibrated"
-
 ---
 ###Camera Calibration
 
@@ -33,7 +28,7 @@ An adjacent list called objpoints will contain the chess board corners as they s
 cal_undistort() will be given the image, and both these points (imgpoints, objpoints) and the camera will be calibrated based on this information (The image, where the corners are, where the corners should be).
 This will return the undistorted image.
 
-![alt text][image2]
+![Image Calibrated](solutions/test_1_vs_calibrated.png)
 
 ###Pipeline (single images)
 
