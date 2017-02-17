@@ -103,7 +103,7 @@ def threshold(image, ksize=3):
     hsv_binary = hsv_threshold(image, thresh=(70, 255))
 
     combined = np.zeros_like(dir_binary)
-    combined[((gradx == 1) & (grady == 1)) | ((mag_binary == 1) & (dir_binary == 1))] = 1
+    combined[((gradx == 1) & (grady == 1)) | ((mag_binary == 1) & (dir_binary == 1) | (hsv_binary == 1))] = 1
 
     return combined
 
@@ -152,6 +152,7 @@ input_image = imread('./test_images/test1.jpg')
 output_image = cal_undistort(input_image, objpoints, imgpoints)
 # threshold_image = threshold(output_image)
 threshold_image = pipeline(output_image)
+threshold_image_2 = threshold(output_image)
 
 src = np.float32([
     [300, 707],
@@ -170,14 +171,16 @@ dst = np.float32([
 transformed_image = transform(output_image, src, dst)
 histogram = get_histogram(cv2.cvtColor(transformed_image, cv2.COLOR_BGR2GRAY))
 
-plt.subplot(2, 1, 1)
+plt.subplot(2, 2, 1)
 plt.title('Original')
 plt.imshow(input_image)
-plt.subplot(2, 1, 2)
+plt.subplot(2, 2, 2)
 plt.title('Output')
 plt.imshow(output_image)
+plt.subplot(2, 2, 3)
+plt.title('Threshold')
+plt.imshow(threshold_image_2, cmap='gray')
 plt.show()
-
 
 # plt.subplot(3, 2, 1)
 # plt.title('Original')
