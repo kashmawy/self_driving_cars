@@ -28,7 +28,7 @@ An adjacent list called objpoints will contain the chess board corners as they s
 cal_undistort() will be given the image, and both these points (imgpoints, objpoints) and the camera will be calibrated based on this information (The image, where the corners are, where the corners should be).
 This will return the undistorted image.
 
-![Image Calibrated](solutions/test_1_vs_calibrated.png)
+![Image Calibrated](solutions/test_1_original_vs_calibrated.png)
 
 ###Pipeline (single images)
 
