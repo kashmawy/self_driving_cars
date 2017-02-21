@@ -183,9 +183,8 @@ def full_pipeline(input_image):
 
     gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
     img_size = (gray.shape[1], gray.shape[0])
-    transformed_image = transform(output_image, src, dst, img_size)
-
-    transformed_image = threshold(transformed_image)
+    threshold_image = threshold(output_image)
+    transformed_image = transform(threshold_image, src, dst, img_size)
 
     # cv2.rectangle(transformed_image, (100, 100), (700, 300), (255, 0, 0), 2)
     # plt.imshow(transformed_image)
