@@ -13,6 +13,9 @@ class Lane:
     def fit(self):
         return np.polyfit(self.ys, self.xs, 2)
 
+    def pixels_fit(self):
+        return np.polyfit(self.ys / Y_METER_PER_PIXEL, self.xs / X_METER_PER_PIXEL, 2)
+
     def p(self):
         return np.poly1d(self.fit())
 

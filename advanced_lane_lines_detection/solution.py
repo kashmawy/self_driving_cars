@@ -8,6 +8,7 @@ from detect import detect_lane_lines, full_detect_lane_lines
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+from transform import TopDownTransform
 
 
 
@@ -170,6 +171,26 @@ def overlay_text(image, text, pos=(0, 0), color=(255, 255, 255)):
     return image
 
 
+def overlay_lane(image, left_fit, right_fit, transform):
+    left_ys = np.linspace(0, 100, num=101) * 7.2
+    left_xs = left_fit[0]*left_ys**2 + left_fit[1]*left_ys + left_fit[2]
+
+    right_ys = np.linspace(0, 100, num=101) * 7.2
+    right_xs = right_fit[0]*right_ys**2 + right_fit[1]*right_ys + right_fit[2]
+
+    color_warp = np.zeros_like(image).astype(np.uint8)
+
+    pts_left = np.array([np.transpose(np.vstack([left_xs, left_ys]))])
+    pts_right = np.array([np.flipud(np.transpose(np.vstack([right_xs, right_ys])))])
+    pts = np.hstack((pts_left, pts_right))
+
+    cv2.fillPoly(color_warp, np.int_([pts]), (0, 255, 0))
+    newwarp = cv2.warpPerspective(color_warp, transform.inverse_transform_matrix(), (image.shape[1], image.shape[0]))
+    newwarp = transform.transform_from_top_down(color_warp, image)
+
+    return cv2.addWeighted(image, 1, newwarp, 0.3, 0)
+
+
 def overlay(left_lane, right_lane, img, shape):
     left_curvature = left_lane.curvature(shape[0])
     right_curvature = right_lane.curvature(shape[0])
@@ -179,6 +200,8 @@ def overlay(left_lane, right_lane, img, shape):
     print("Left curvature", left_curvature)
     print("Right curvature", right_curvature)
     print("Center distance", center_distance)
+
+    img = overlay_lane(img, left_lane.pixels_fit(), right_lane.pixels_fit(), TopDownTransform())
 
     left_overlay = "Left curvature: {0:.2f}m".format(left_curvature)
     img = overlay_text(img, left_overlay, pos=(10, 10))
@@ -216,8 +239,8 @@ def full_pipeline(input_image):
     threshold_image = threshold(output_image)
     transformed_image = transform(threshold_image, src, dst, img_size)
 
-    plt.imshow(transformed_image)
-    plt.show()
+    # plt.imshow(transformed_image)
+    # plt.show()
 
     # histogram = get_histogram(transformed_image)
 
@@ -226,12 +249,12 @@ def full_pipeline(input_image):
     left_fitx, ploty = left_lane.get_lane_fit(transformed_image.shape[0])
     right_fitx, ploty = right_lane.get_lane_fit(transformed_image.shape[0])
 
-    plt.imshow(out_image)
-    plt.plot(left_fitx, ploty, color='yellow')
-    plt.plot(right_fitx, ploty, color='red')
-    plt.xlim(0, 1280)
-    plt.ylim(720, 0)
-    plt.show()
+    # plt.imshow(out_image)
+    # plt.plot(left_fitx, ploty, color='yellow')
+    # plt.plot(right_fitx, ploty, color='red')
+    # plt.xlim(0, 1280)
+    # plt.ylim(720, 0)
+    # plt.show()
 
     img = overlay(left_lane, right_lane, input_image, input_image.shape)
     plt.imshow(img)
@@ -240,4 +263,4 @@ def full_pipeline(input_image):
     return out_image
 
 
-result = full_pipeline(imread('./test_images/test1.jpg'))
+result = full_pipeline(imread('./test_images/test3.jpg'))
