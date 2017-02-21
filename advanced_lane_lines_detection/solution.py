@@ -166,36 +166,20 @@ def full_pipeline(input_image):
         [1191, 707]
     ])
 
-    # src = np.float32([
-    #     [595, 450],
-    #     [690, 450],
-    #     [216, 720],
-    #     [1115, 720]
-    # ])
-    #
-    # dst = np.float32([
-    #     [440, 0],
-    #     [840, 0],
-    #     [440, 720],
-    #     [840, 720]
-    # ])
-
 
     gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
     img_size = (gray.shape[1], gray.shape[0])
     threshold_image = threshold(output_image)
     transformed_image = transform(threshold_image, src, dst, img_size)
 
-    # cv2.rectangle(transformed_image, (100, 100), (700, 300), (255, 0, 0), 2)
-    # plt.imshow(transformed_image)
-    # plt.show()
-
     plt.imshow(transformed_image)
     plt.show()
 
-    histogram = get_histogram(transformed_image)
+    # histogram = get_histogram(transformed_image)
 
     (left_lane, right_lane, out_image) = full_detect_lane_lines(transformed_image)
+
+    import pytest; pytest.set_trace()
 
     ploty = np.linspace(0, transformed_image.shape[0]-1, transformed_image.shape[0])
     left_fitx = left_lane.fit()[0] * ploty ** 2 + left_lane.fit()[1] * ploty + left_lane.fit()[2]

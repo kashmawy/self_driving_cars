@@ -16,21 +16,21 @@ class PixelCalculations:
 
     # @cached_property
     def p(self):
-        return np.poly1d(self.fit)
+        return np.poly1d(self.fit())
 
     # @cached_property
     def p1(self):
         """first derivative"""
-        return np.polyder(self.p)
+        return np.polyder(self.p())
 
     # @cached_property
     def p2(self):
         """second derivative"""
-        return np.polyder(self.p, 2)
+        return np.polyder(self.p(), 2)
 
     def curvature(self, y):
         """returns the curvature of the of the lane in meters"""
-        return ((1 + (self.p1(y)**2))**1.5) / np.absolute(self.p2(y))
+        return ((1 + (self.p1()*y**2))**1.5) / np.absolute(self.p2()*y)
 
 class MeterCalculations(PixelCalculations):
     def __init__(self, xs, ys):
@@ -52,14 +52,16 @@ class Lane:
     def p(self):
         return np.poly1d(self.fit())
 
-    def p1(self, val):
+    # @cached_property
+    def p1(self):
         """first derivative"""
-        return np.polyder(self.p)(val)
+        return np.polyder(self.p())
 
+    # @cached_property
     def p2(self):
         """second derivative"""
-        return np.polyder(self.p, 2)(val)
+        return np.polyder(self.p(), 2)
 
     def curvature(self, y):
         """returns the curvature of the of the lane in meters"""
-        return ((1 + (self.p1(y)**2))**1.5) / np.absolute(self.p2(y))
+        return ((1 + (self.p1()(y) ** 2)) ** 1.5) / np.absolute(self.p2()(y))
