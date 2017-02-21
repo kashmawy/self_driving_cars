@@ -103,7 +103,7 @@ def threshold(image, ksize=3):
     # dir_binary = dir_threshold(image, sobel_kernel=ksize, thresh=(0.7, 1.3))
     hsv_binary = hsv_threshold(image, thresh=(130, 255))
 
-    combined = np.zeros_like(hsv_binary)
+    combined = np.zeros_like(mag_binary)
 
     combined[(hsv_binary == 1) | ((grady == 1) & (gradx == 1)) | ((mag_binary == 1) & (gradx == 1))] = 1
 
@@ -149,8 +149,8 @@ def full_pipeline(input_image):
     (objpoints, imgpoints) = get_points()
     output_image = cal_undistort(input_image, objpoints, imgpoints)
     # threshold_image = threshold(output_image)
-    threshold_image2 = pipeline(output_image)
-    threshold_image = threshold(output_image)
+    # threshold_image2 = pipeline(output_image)
+    # threshold_image = threshold(output_image)
 
     src = np.float32([
         [300, 707],
@@ -183,7 +183,9 @@ def full_pipeline(input_image):
 
     gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
     img_size = (gray.shape[1], gray.shape[0])
-    transformed_image = transform(threshold_image, src, dst, img_size)
+    transformed_image = transform(output_image, src, dst, img_size)
+
+    transformed_image = threshold(transformed_image)
 
     # cv2.rectangle(transformed_image, (100, 100), (700, 300), (255, 0, 0), 2)
     # plt.imshow(transformed_image)

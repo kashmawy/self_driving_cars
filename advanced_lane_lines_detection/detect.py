@@ -11,18 +11,18 @@ import matplotlib.pyplot as plt
 from lane import Lane
 from lanes import Lanes
 
-def detect_lane_lines(image, last_lanes=None):
-    if(last_lanes is None):
-        return full_detect_lane_lines(image )
+def detect_lane_lines(image, last_left_lane=None, last_right_lane=None):
+    if(last_lanes is None or last_right_lane is None):
+        return full_detect_lane_lines(image)
     else:
-        return quick_detect_lane_lines(image, last_lanes)
+        return quick_detect_lane_lines(image, last_left_lane, last_right_lane)
 
-def quick_detect_lane_lines(image, last_lanes):
+def quick_detect_lane_lines(image, last_left_lane, last_right_lane):
     nonzero = image.nonzero()
     nonzero_x, nonzero_y = np.array(nonzero[1]), np.array(nonzero[0])
 
-    last_left_p = np.poly1d(last_lanes.left.pixels.fit)
-    last_right_p = np.poly1d(last_lanes.right.pixels.fit)
+    last_left_p = np.poly1d(last_left_lane.fit)
+    last_right_p = np.poly1d(last_right_lane.fit)
 
     margin = 100
 
@@ -41,7 +41,7 @@ def quick_detect_lane_lines(image, last_lanes):
     left = Lane(left_x, left_y)
     right = Lane(right_x, right_y)
 
-    return Lanes(left, right), image
+    return (left, right, image)
     # return image
 
 def full_detect_lane_lines(image):
