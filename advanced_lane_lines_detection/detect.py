@@ -44,6 +44,7 @@ def quick_detect_lane_lines(image, last_left_lane, last_right_lane):
     return (left, right, image)
     # return image
 
+
 def full_detect_lane_lines(image):
     # Settings
     window_margin = 100          # This will be +/- on left and right sides of the window

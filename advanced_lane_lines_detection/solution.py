@@ -145,6 +145,20 @@ def get_histogram(img):
     return histogram
 
 
+def distance_from_center(left, right, center):
+    X_METER_PER_PIXEL = 3.7 / 700
+    Y_METER_PER_PIXEL = 30 / 720
+    TO_METER = np.array([[X_METER_PER_PIXEL, 0],
+                      [0, Y_METER_PER_PIXEL]])
+
+    center_dot = np.dot(TO_METER, center)
+
+    right_x = right.p()(center_dot[1])
+    left_x = left.p()(center_dot[1])
+
+    return ((right_x + left_x)/2 - center_dot[0])
+
+
 def full_pipeline(input_image):
     (objpoints, imgpoints) = get_points()
     output_image = cal_undistort(input_image, objpoints, imgpoints)
@@ -178,6 +192,15 @@ def full_pipeline(input_image):
     # histogram = get_histogram(transformed_image)
 
     (left_lane, right_lane, out_image) = full_detect_lane_lines(transformed_image)
+
+    left_curvature = left_lane.curvature(gray.shape[0])
+    right_curvature = right_lane.curvature(gray.shape[0])
+    center_point = (gray.shape[1]/2, gray.shape[0])
+    center_distance = distance_from_center(left_lane, right_lane, center_point)
+
+    print("Left curvature", left_curvature)
+    print("Right curvature", right_curvature)
+    print("Center distance", center_distance)
 
     import pytest; pytest.set_trace()
 
