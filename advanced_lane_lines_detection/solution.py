@@ -5,6 +5,10 @@ from scipy.misc import imread, imresize, imsave
 import matplotlib.pyplot as plt
 from detect import detect_lane_lines, full_detect_lane_lines
 # %matplotlib qt
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+
 
 
 def cal_undistort(img, objpoints, imgpoints):
@@ -159,6 +163,39 @@ def distance_from_center(left, right, center):
     return ((right_x + left_x)/2 - center_dot[0])
 
 
+
+def overlay_text(image, text, pos=(0, 0), color=(255, 255, 255)):
+    image = Image.fromarray(image)
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.truetype("./fonts/liberation-sans.ttf", 64)
+    draw.text(pos, text, color, font=font)
+    image = np.asarray(image)
+
+    return image
+
+
+def overlay(left_lane, right_lane, img, shape):
+    left_curvature = left_lane.curvature(shape[0])
+    right_curvature = right_lane.curvature(shape[0])
+    center_point = (shape[1] / 2, shape[0])
+    center_distance = distance_from_center(left_lane, right_lane, center_point)
+
+    print("Left curvature", left_curvature)
+    print("Right curvature", right_curvature)
+    print("Center distance", center_distance)
+
+    left_overlay = "Left curvature: {0:.2f}m".format(left_curvature)
+    img = overlay_text(img, left_overlay, pos=(10, 10))
+
+    right_overlay = "Right curvature: {0:.2f}m".format(right_curvature)
+    img = overlay_text(img, right_overlay, pos=(10, 90))
+
+    center_overlay = "Distance from center: {0:.2f}m".format(center_distance)
+    img = overlay_text(img, center_overlay, pos=(10, 180))
+
+    return img
+
+
 def full_pipeline(input_image):
     (objpoints, imgpoints) = get_points()
     output_image = cal_undistort(input_image, objpoints, imgpoints)
@@ -193,17 +230,6 @@ def full_pipeline(input_image):
 
     (left_lane, right_lane, out_image) = full_detect_lane_lines(transformed_image)
 
-    left_curvature = left_lane.curvature(gray.shape[0])
-    right_curvature = right_lane.curvature(gray.shape[0])
-    center_point = (gray.shape[1]/2, gray.shape[0])
-    center_distance = distance_from_center(left_lane, right_lane, center_point)
-
-    print("Left curvature", left_curvature)
-    print("Right curvature", right_curvature)
-    print("Center distance", center_distance)
-
-    import pytest; pytest.set_trace()
-
     ploty = np.linspace(0, transformed_image.shape[0]-1, transformed_image.shape[0])
     left_fitx = left_lane.fit()[0] * ploty ** 2 + left_lane.fit()[1] * ploty + left_lane.fit()[2]
     right_fitx = right_lane.fit()[0] * ploty ** 2 + right_lane.fit()[1] * ploty + right_lane.fit()[2]
@@ -214,6 +240,11 @@ def full_pipeline(input_image):
     plt.xlim(0, 1280)
     plt.ylim(720, 0)
     plt.show()
+
+    img = overlay(left_lane, right_lane, input_image, gray.shape)
+    plt.imshow(img)
+    plt.show()
+
     return out_image
 
 
