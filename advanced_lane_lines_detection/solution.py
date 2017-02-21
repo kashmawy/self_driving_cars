@@ -43,10 +43,6 @@ def get_points():
             objpoints.append(objp)
             imgpoints.append(corners)
 
-            # img = cv2.drawChessboardCorners(img, (9,6), corners, ret)
-            # cv2.imshow('img',img)
-            # cv2.waitKey(500)
-
     return (objpoints, imgpoints)
 
 
@@ -155,7 +151,7 @@ def distance_from_center(left, right, center):
     TO_METER = np.array([[X_METER_PER_PIXEL, 0],
                       [0, Y_METER_PER_PIXEL]])
 
-    center_dot = np.dot(TO_METER, center)
+    center_dot = np.dot(center, TO_METER)
 
     right_x = right.p()(center_dot[1])
     left_x = left.p()(center_dot[1])
@@ -199,9 +195,6 @@ def overlay(left_lane, right_lane, img, shape):
 def full_pipeline(input_image):
     (objpoints, imgpoints) = get_points()
     output_image = cal_undistort(input_image, objpoints, imgpoints)
-    # threshold_image = threshold(output_image)
-    # threshold_image2 = pipeline(output_image)
-    # threshold_image = threshold(output_image)
 
     src = np.float32([
         [300, 707],
@@ -230,9 +223,8 @@ def full_pipeline(input_image):
 
     (left_lane, right_lane, out_image) = full_detect_lane_lines(transformed_image)
 
-    ploty = np.linspace(0, transformed_image.shape[0]-1, transformed_image.shape[0])
-    left_fitx = left_lane.fit()[0] * ploty ** 2 + left_lane.fit()[1] * ploty + left_lane.fit()[2]
-    right_fitx = right_lane.fit()[0] * ploty ** 2 + right_lane.fit()[1] * ploty + right_lane.fit()[2]
+    left_fitx, ploty = left_lane.get_lane_fit(transformed_image.shape[0])
+    right_fitx, ploty = right_lane.get_lane_fit(transformed_image.shape[0])
 
     plt.imshow(out_image)
     plt.plot(left_fitx, ploty, color='yellow')
@@ -241,7 +233,7 @@ def full_pipeline(input_image):
     plt.ylim(720, 0)
     plt.show()
 
-    img = overlay(left_lane, right_lane, input_image, gray.shape)
+    img = overlay(left_lane, right_lane, input_image, input_image.shape)
     plt.imshow(img)
     plt.show()
 
@@ -249,65 +241,3 @@ def full_pipeline(input_image):
 
 
 result = full_pipeline(imread('./test_images/test1.jpg'))
-# plt.imshow(result)
-# plt.show()
-
-# f, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 10))
-# f.tight_layout()
-#
-# ax1.set_title("Sliding windows used in detection")
-# ax1.imshow(result, cmap="gray")
-#
-# ax2.set_title("Fitted lines found in detection")
-# ax2.imshow(result, cmap="gray");
-#
-# # Left lane
-# # import pytest; pytest.set_trace()
-# left_p = np.poly1d(lanes.left.pixels.fit())
-# left_xp = np.linspace(0, 720, 100)
-#
-# # import pytest; pytest.set_trace()
-# ax2.plot(left_p(left_xp), left_xp)
-#
-# # Right lane
-# right_p = np.poly1d(lanes.right.pixels.fit())
-# right_xp = np.linspace(0, 720, 100)
-# ax2.plot(right_p(right_xp), right_xp)
-#
-# plt.show();
-
-
-# plt.subplot(2, 2, 1)
-# plt.title('Original')
-# plt.imshow(input_image)
-# plt.subplot(2, 2, 2)
-# plt.title('Threshold')
-# plt.imshow(threshold_image, cmap='gray')
-# plt.subplot(2, 2, 3)
-# plt.title('Transformed')
-# plt.imshow(transformed_image)
-# plt.subplot(2, 2, 4)
-# plt.title('Result')
-# plt.imshow(result)
-# plt.subplot(3, 1, 3)
-# plt.plot(histogram)
-# plt.show()
-
-# import pytest; pytest.set_trace()
-
-# plt.subplot(3, 2, 1)
-# plt.title('Original')
-# plt.imshow(input_image)
-# plt.subplot(3, 2, 2)
-# plt.title('Output')
-# plt.imshow(output_image)
-# plt.subplot(3, 2, 3)
-# plt.title('Threshold')
-# plt.imshow(threshold_image, cmap='gray')
-# plt.subplot(3, 2, 4)
-# plt.title('Bird Eye View')
-# plt.imshow(transformed_image)
-# plt.subplot(3, 2, 5)
-# plt.title('Histogram')
-# plt.plot(histogram)
-# plt.show()
