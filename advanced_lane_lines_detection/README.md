@@ -4,18 +4,6 @@
 
 **Advanced Lane Finding Project**
 
-The goals / steps of this project are the following:
-
-* Compute the camera calibration matrix and distortion coefficients given a set of chessboard images.
-* Apply a distortion correction to raw images.
-* Use color transforms, gradients, etc., to create a thresholded binary image.
-* Apply a perspective transform to rectify binary image ("birds-eye view").
-* Detect lane pixels and fit to find the lane boundary.
-* Determine the curvature of the lane and vehicle position with respect to center.
-* Warp the detected lane boundaries back onto the original image.
-* Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
-
----
 ###Camera Calibration
 
 ####1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
@@ -31,28 +19,34 @@ This will return the undistorted image.
 ![Image Calibrated](solutions/test_1_original_vs_calibrated.png)
 
 ####2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
+
+The code for this step is in solution.py in threshold, abs_sobel_thresh, mag_threshold and hsv_threshold
+
+abs_sobel_thresh does sobel threshold on an image in any direction x or y. The image is first converted into gray scale, then sobel threshold is applied with a given threshold.
+In this case, we did did both x sobel with threshold (20, 100) and y sobel with threshold (20, 100).
+
+mag_threshold does magnitude threshold on an image by first converting the image into gray scale, then doing sobel x and sobel y and calculating gradient magnitude as sqrt(sobelx^2, sobely^2) and a scale factor of maximum value of gradient magnitude / 255. Then our final gradient magnitude is the gradient magnitude divided by the scale factor. The threshold given is then applied to that.
+In this case, we did a magnitude threshold of (30, 100).
+
+hsv_threshold converts the image to HSV color space and then applies a given threshold on the S channel. In this case the threshold applied is (100, 255).
+
+The final image output is composed of:
+Either (abs_sobel_thresh of 1 for x and abs_sobel_thresh of 1 for y)
+or (mag_threshold of 1 and abs_sobel_thresh of 1 for x)
+or (hsv_threshold of 1)
 
 ![Threshold](solutions/threshold.png)
 
 ####3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
-The code for my perspective transform includes a function called `warper()`, which appears in lines 1 through 8 in the file `example.py` (output_images/examples/example.py) (or, for example, in the 3rd code cell of the IPython notebook).  The `warper()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
+The code for this step is in solution.py in transform.
+transform takes source and destination points and gets the transformation matrix and then transforms the image.
+In this case, src and dst were retrieved from the image below:
 
-```
-src = np.float32(
-    [[(img_size[0] / 2) - 55, img_size[1] / 2 + 100],
-    [((img_size[0] / 6) - 10), img_size[1]],
-    [(img_size[0] * 5 / 6) + 60, img_size[1]],
-    [(img_size[0] / 2 + 55), img_size[1] / 2 + 100]])
-dst = np.float32(
-    [[(img_size[0] / 4), 0],
-    [(img_size[0] / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), 0]])
+![Transform Image](test_images/test1.jpg)
 
-```
-This resulted in the following source and destination points:
+
+The following source and destination were retrieved from the image above:
 
 | Source        | Destination   | 
 |:-------------:|:-------------:| 
@@ -62,11 +56,19 @@ This resulted in the following source and destination points:
 | 1146, 707     | 1191, 707     |
 
 
-I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
+
+
+By applying the transform method with these source and destination points, we change the prespective into a bird eye view prespective as can be seen in the following image:
+
 
 ![Bird Eye](solutions/bird_eye.png)
 
 ####4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
+
+The following histogram shows the sum of the pixel values over the lower half of the bird eye view, and it shows two spikes where the lanes are at.
+
+![Lane](solutions/histogram.png)
+
 
 Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
 

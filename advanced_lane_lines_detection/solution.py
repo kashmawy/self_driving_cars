@@ -3,6 +3,7 @@ import cv2
 import glob
 from scipy.misc import imread, imresize, imsave
 import matplotlib.pyplot as plt
+from detect import detect_lane_lines, full_detect_lane_lines
 # %matplotlib qt
 
 
@@ -96,14 +97,15 @@ def hsv_threshold(img, thresh=(170, 255)):
 
 
 def threshold(image, ksize=3):
-    gradx = abs_sobel_thresh(image, orient='x', thresh=(20, 100))
-    grady = abs_sobel_thresh(image, orient='y', thresh=(20, 100))
-    mag_binary = mag_thresh(image, sobel_kernel=ksize, mag_thresh=(30, 100))
-    dir_binary = dir_threshold(image, sobel_kernel=ksize, thresh=(0.7, 1.3))
-    hsv_binary = hsv_threshold(image, thresh=(70, 255))
+    gradx = abs_sobel_thresh(image, orient='x', thresh=(30, 100))
+    grady = abs_sobel_thresh(image, orient='y', thresh=(30, 100))
+    mag_binary = mag_thresh(image, sobel_kernel=ksize, mag_thresh=(40, 100))
+    # dir_binary = dir_threshold(image, sobel_kernel=ksize, thresh=(0.7, 1.3))
+    hsv_binary = hsv_threshold(image, thresh=(130, 255))
 
-    combined = np.zeros_like(dir_binary)
-    combined[((gradx == 1) & (grady == 1)) | ((mag_binary == 1) & (dir_binary == 1) | (hsv_binary == 1))] = 1
+    combined = np.zeros_like(hsv_binary)
+
+    combined[(hsv_binary == 1) | ((grady == 1) & (gradx == 1)) | ((mag_binary == 1) & (gradx == 1))] = 1
 
     return combined
 
@@ -133,51 +135,126 @@ def pipeline(img, s_thresh=(170, 255), sx_thresh=(20, 100)):
     return color_binary
 
 
-def transform(img, src, dst):
+def transform(img, src, dst, img_size):
     M = cv2.getPerspectiveTransform(src, dst)
-
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray_size = (gray.shape[1], gray.shape[0])
-    return cv2.warpPerspective(img, M, gray_size, flags=cv2.INTER_LINEAR)
+    return cv2.warpPerspective(img, M, img_size)
 
 
 def get_histogram(img):
-    import numpy as np
     histogram = np.sum(img[(int)(img.shape[0] / 2):, :], axis=0)
     return histogram
 
 
-(objpoints, imgpoints) = get_points()
-input_image = imread('./test_images/test1.jpg')
-output_image = cal_undistort(input_image, objpoints, imgpoints)
-# threshold_image = threshold(output_image)
-threshold_image = pipeline(output_image)
-threshold_image_2 = threshold(output_image)
+def full_pipeline(input_image):
+    (objpoints, imgpoints) = get_points()
+    output_image = cal_undistort(input_image, objpoints, imgpoints)
+    # threshold_image = threshold(output_image)
+    threshold_image2 = pipeline(output_image)
+    threshold_image = threshold(output_image)
 
-src = np.float32([
-    [300, 707],
-    [580, 463],
-    [750, 463],
-    [1146, 707]
-])
+    src = np.float32([
+        [300, 707],
+        [580, 463],
+        [750, 463],
+        [1146, 707]
+    ])
 
-dst = np.float32([
-    [209, 713],
-    [203, 60],
-    [1134, 37],
-    [1191, 707]
-])
+    dst = np.float32([
+        [209, 713],
+        [203, 60],
+        [1134, 37],
+        [1191, 707]
+    ])
 
-transformed_image = transform(output_image, src, dst)
-histogram = get_histogram(cv2.cvtColor(transformed_image, cv2.COLOR_BGR2GRAY))
+    # src = np.float32([
+    #     [595, 450],
+    #     [690, 450],
+    #     [216, 720],
+    #     [1115, 720]
+    # ])
+    #
+    # dst = np.float32([
+    #     [440, 0],
+    #     [840, 0],
+    #     [440, 720],
+    #     [840, 720]
+    # ])
 
-plt.subplot(2, 1, 1)
-plt.title('Original')
-plt.imshow(input_image)
-plt.subplot(2, 1, 2)
-plt.title('Bird Eye')
-plt.imshow(transformed_image)
-plt.show()
+
+    gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
+    img_size = (gray.shape[1], gray.shape[0])
+    transformed_image = transform(threshold_image, src, dst, img_size)
+
+    # cv2.rectangle(transformed_image, (100, 100), (700, 300), (255, 0, 0), 2)
+    # plt.imshow(transformed_image)
+    # plt.show()
+
+    plt.imshow(transformed_image)
+    plt.show()
+
+    histogram = get_histogram(transformed_image)
+
+    (left_lane, right_lane, out_image) = full_detect_lane_lines(transformed_image)
+
+    ploty = np.linspace(0, transformed_image.shape[0]-1, transformed_image.shape[0])
+    left_fitx = left_lane.fit()[0] * ploty ** 2 + left_lane.fit()[1] * ploty + left_lane.fit()[2]
+    right_fitx = right_lane.fit()[0] * ploty ** 2 + right_lane.fit()[1] * ploty + right_lane.fit()[2]
+
+    plt.imshow(out_image)
+    plt.plot(left_fitx, ploty, color='yellow')
+    plt.plot(right_fitx, ploty, color='red')
+    plt.xlim(0, 1280)
+    plt.ylim(720, 0)
+    plt.show()
+    return out_image
+
+
+result = full_pipeline(imread('./test_images/test1.jpg'))
+# plt.imshow(result)
+# plt.show()
+
+# f, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 10))
+# f.tight_layout()
+#
+# ax1.set_title("Sliding windows used in detection")
+# ax1.imshow(result, cmap="gray")
+#
+# ax2.set_title("Fitted lines found in detection")
+# ax2.imshow(result, cmap="gray");
+#
+# # Left lane
+# # import pytest; pytest.set_trace()
+# left_p = np.poly1d(lanes.left.pixels.fit())
+# left_xp = np.linspace(0, 720, 100)
+#
+# # import pytest; pytest.set_trace()
+# ax2.plot(left_p(left_xp), left_xp)
+#
+# # Right lane
+# right_p = np.poly1d(lanes.right.pixels.fit())
+# right_xp = np.linspace(0, 720, 100)
+# ax2.plot(right_p(right_xp), right_xp)
+#
+# plt.show();
+
+
+# plt.subplot(2, 2, 1)
+# plt.title('Original')
+# plt.imshow(input_image)
+# plt.subplot(2, 2, 2)
+# plt.title('Threshold')
+# plt.imshow(threshold_image, cmap='gray')
+# plt.subplot(2, 2, 3)
+# plt.title('Transformed')
+# plt.imshow(transformed_image)
+# plt.subplot(2, 2, 4)
+# plt.title('Result')
+# plt.imshow(result)
+# plt.subplot(3, 1, 3)
+# plt.plot(histogram)
+# plt.show()
+
+# import pytest; pytest.set_trace()
 
 # plt.subplot(3, 2, 1)
 # plt.title('Original')
