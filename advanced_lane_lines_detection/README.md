@@ -69,7 +69,7 @@ The following histogram shows the sum of the pixel values over the lower half of
 
 ![Lane](solutions/histogram.png)
 
-detect.py has the method full_detect_lane_lines() which takes the image, creates a histogram shown above which has the sum of the values in the image up to half of its height.
+solution.py has the method full_detect_lane_lines() which takes the image, creates a histogram shown above which has the sum of the values in the image up to half of its height.
 We get the maximum value up to the midpoint and recognize this as the left lane starting point, and then the maximum value from the midpoint until the endpoint and then recognize this as the right lane starting point.
 
 We then create 9 windows over the height of the image for the left lane and the right lane.
@@ -85,6 +85,7 @@ The picture below shows the boxes and the lines through the lanes:
 
 in lane.py, the method curvature() calculates the curvature of the lane.
 The curvature of the line is computed as (1 + first_order_derivative_of_line_fit(y)^2)^1.5 / absolute(second_order_derivate_of_line_fit(y)) where y is the image height.
+
 The distance from the center is computed as:
  let A be the dot product of the center point (height / 2, width) and TO_METER which is an array of the x meters per pixel and y meters per pixel
  let B be the first order derivate of the line to fit the left lane
@@ -96,9 +97,12 @@ The distance from the center is computed as:
 
 ####6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in lines # through # in my code in `yet_another_file.py` in the function `map_lane()`.  Here is an example of my result on a test image:
+In solution.py overlay_lane(), the image is given, the line fitting the left lane, the line fitting the right lane and a top down transform.
+overlay_lane() creates a line on the left and a line on the right and overlays between the lane with a green shade.
 
-![alt text][image6]
+This can be seen in the picture below:
+
+![Lanes](solutions/f_lanes.png)
 
 ---
 
@@ -106,7 +110,10 @@ I implemented this step in lines # through # in my code in `yet_another_file.py`
 
 ####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-Here's a [link to my video result](./project_video.mp4)
+The pipeline is created in def convert_video() by calling full_pipeline on each image in the video which performs the operations described above.
+Here is the video output:
+
+Here's a [link to my video result](./output/project_video.mp4)
 
 ---
 

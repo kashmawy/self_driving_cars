@@ -3,14 +3,14 @@ import cv2
 import glob
 from scipy.misc import imread, imresize, imsave
 import matplotlib.pyplot as plt
-from detect import detect_lane_lines, full_detect_lane_lines
+from lane import Lane
 # %matplotlib qt
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
-from transform import TopDownTransform
 from moviepy.editor import VideoFileClip
 from datetime import datetime
+from transform import TopDownTransform
 
 
 def cal_undistort(img, objpoints, imgpoints):
@@ -216,6 +216,92 @@ def overlay(left_lane, right_lane, img, shape):
     return img
 
 
+def detect_lane_lines(image):
+    # Settings
+    window_margin = 100          # This will be +/- on left and right sides of the window
+    min_pixels_to_recenter = 50  # Minimum number of pixels before recentering the window
+    num_windows = 9              # Number of sliding windows
+
+    image_height, image_width = image.shape
+
+    # Incoming image should already be  undistorted, transformed top-down, and
+    # passed through thresholding. Takes histogram of lower half of the image.
+    histogram = np.sum(image[image_height//2:,:], axis=0)
+
+    # Placeholder for the image to be returned
+    out_image = np.dstack((image, image, image))*255
+
+    # Find peaks on left and right halves of the image
+    midpoint = image_width//2
+    base_left_x = np.argmax(histogram[:midpoint])
+    base_right_x = np.argmax(histogram[midpoint:]) + midpoint
+
+    # Set height of windows based on num_windows
+    window_height = image_height//num_windows
+
+    # Get points of non-zero pixels in image
+    nonzero = image.nonzero()
+    nonzero_x, nonzero_y = np.array(nonzero[1]), np.array(nonzero[0])
+
+    # Initialize current position, will be updated in each window
+    current_left_x = base_left_x
+    current_right_x = base_right_x
+
+    # This is where the lane indices will be stored
+    left_lane_indices = []
+    right_lane_indices = []
+
+    for window in range(num_windows):
+        # Get the window boundaries
+        window_y_low = image_height - (window + 1) * window_height
+        window_y_high = image_height - window * window_height
+
+        window_left_x_low = current_left_x - window_margin
+        window_left_x_high = current_left_x + window_margin
+
+        window_right_x_low = current_right_x - window_margin
+        window_right_x_high = current_right_x + window_margin
+
+        # Draw the windows on the visualization image
+        cv2.rectangle(out_image, (window_left_x_low, window_y_low), (window_left_x_high, window_y_high), (0, 255, 0), 2)
+        cv2.rectangle(out_image, (window_right_x_low, window_y_low), (window_right_x_high, window_y_high), (0, 255, 0), 2)
+
+        # Identify the non-zero points within the window
+        good_left_indices = ((nonzero_y >= window_y_low) &
+                             (nonzero_y < window_y_high) &
+                             (nonzero_x >= window_left_x_low) &
+                             (nonzero_x < window_left_x_high)).nonzero()[0]
+
+        good_right_indices = ((nonzero_y >= window_y_low) &
+                              (nonzero_y < window_y_high) &
+                              (nonzero_x >= window_right_x_low) &
+                              (nonzero_x < window_right_x_high)).nonzero()[0]
+
+        # Append the indices to the list
+        left_lane_indices.append(good_left_indices)
+        right_lane_indices.append(good_right_indices)
+
+        if(len(good_left_indices) > min_pixels_to_recenter):
+            current_left_x = np.int(np.mean(nonzero_x[good_left_indices]))
+
+        if(len(good_right_indices) > min_pixels_to_recenter):
+            current_right_x = np.int(np.mean(nonzero_x[good_right_indices]))
+
+    # Concatenate indices so it becomes a flat array
+    left_lane_indices = np.concatenate(left_lane_indices)
+    right_lane_indices = np.concatenate(right_lane_indices)
+
+    # Extract the land right lane pixels
+    left_x = nonzero_x[left_lane_indices]
+    left_y = nonzero_y[left_lane_indices]
+    right_x = nonzero_x[right_lane_indices]
+    right_y = nonzero_y[right_lane_indices]
+
+    left_lane = Lane(left_x, left_y)
+    right_lane = Lane(right_x, right_y)
+
+    return (left_lane, right_lane, out_image)
+
 objpoints = []
 imgpoints = []
 
@@ -227,11 +313,7 @@ def full_pipeline(input_image):
     if objpoints == [] and imgpoints == []:
         (objpoints, imgpoints) = get_points()
 
-    # t1 = datetime.now()
-    # print("Undistort")
     output_image = cal_undistort(input_image, objpoints, imgpoints)
-    # t2 = datetime.now()
-    # print("Undistorted", (t2 - t1).microseconds)
 
     src = np.float32([[585, 456],
                      [699, 456],
@@ -243,65 +325,30 @@ def full_pipeline(input_image):
                      [1000, 600],
                      [300, 600]])
 
-    # t3 = datetime.now()
-    # print("Threshold")
     gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
     img_size = (gray.shape[1], gray.shape[0])
     threshold_image = threshold(output_image)
-    # t4 = datetime.now()
-    # print("Thresholded", (t4 - t3).microseconds)
 
-    # t5 = datetime.now()
-    # print("Transform")
     transformed_image = transform(threshold_image, src, dst, img_size)
-    # t6 = datetime.now()
-    # print("Transformed", (t6 - t5).microseconds)
 
-    # plt.imshow(transformed_image)
-    # plt.show()
+    (left_lane, right_lane, img) = detect_lane_lines(transformed_image)
 
-    # histogram = get_histogram(transformed_image)
+    left_lane.get_lane_fit(transformed_image.shape[0])
+    right_lane.get_lane_fit(transformed_image.shape[0])
 
-    # t7 = datetime.now()
-    # print("Detect lane lines")
-    (left_lane, right_lane, out_image) = full_detect_lane_lines(transformed_image)
-    # t8 = datetime.now()
-    # print("Detected lane lines", (t8 - t7).microseconds)
-
-    left_fitx, ploty = left_lane.get_lane_fit(transformed_image.shape[0])
-    right_fitx, ploty = right_lane.get_lane_fit(transformed_image.shape[0])
-
-    plt.imshow(out_image)
-    plt.plot(left_fitx, ploty, color='yellow')
-    plt.plot(right_fitx, ploty, color='red')
-    plt.xlim(0, 1280)
-    plt.ylim(720, 0)
-    plt.show()
-
-    # t9 = datetime.now()
-
-    # print("Overlay")
     img = overlay(left_lane, right_lane, input_image, input_image.shape)
-    # t10 = datetime.now()
-    # print("Overlayed", (t10 - t9).microseconds)
-
-    plt.imshow(img)
-    plt.show()
-
-    plt.imshow(out_image)
-    # plt.show()
 
     return img
 
 
 def convert_video():
-    input_clip = VideoFileClip('./video/project_video.mp4')
+    input_clip = VideoFileClip('./challenge_video.mp4')
     output_clip = input_clip.fl_image(full_pipeline)
-    output_clip.write_videofile('./output/project_video.mp4', audio=False)
+    output_clip.write_videofile('./output/project_challenge.mp4', audio=False)
 
 
-# convert_video()
-result = full_pipeline(imread('./test_images/test1.jpg'))
+convert_video()
+# result = full_pipeline(imread('./test_images/test1.jpg'))
 
 # plt.imshow(result)
 # plt.show()

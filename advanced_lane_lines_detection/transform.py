@@ -16,14 +16,8 @@ class TopDownTransform:
         self.src_points = src_points
         self.dst_points = dst_points
 
-    def transform_matrix(self):
-        return cv2.getPerspectiveTransform(self.src_points, self.dst_points)
-
     def inverse_transform_matrix(self):
         return cv2.getPerspectiveTransform(self.dst_points, self.src_points)
-
-    def transform_to_top_down(self, img):
-        return cv2.warpPerspective(img, self.transform_matrix(), img.shape[1::-1])
 
     def transform_from_top_down(self, img, size_img):
         return cv2.warpPerspective(img, self.inverse_transform_matrix(), size_img.shape[1::-1])
