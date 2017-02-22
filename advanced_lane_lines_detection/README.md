@@ -121,5 +121,10 @@ Here's a [link to my video result](https://youtu.be/gHOrW8mfJ2U)
 
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+In the challenge video, my pipeline shows some issues: some of the images has incorrect lanes detected.
+I noticed that shadow (from a bridge) and approaching the road divider particularly confuses the pipeline.
 
+The following are things that could be improved:
+1. smoothing algorithm that takes into consideration lanes from previous frame, so if the current lane is very different from the previous frames, it would dismiss it.
+2. source points for bird view transformation close enough to the lane positions so it won't include the road divider if it was approached.
+3. better smoothing the vertical windows in each lane, so if one window is way off, then it won't be included.
