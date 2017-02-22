@@ -9,7 +9,8 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 from transform import TopDownTransform
-
+from moviepy.editor import VideoFileClip
+from datetime import datetime
 
 
 def cal_undistort(img, objpoints, imgpoints):
@@ -98,11 +99,11 @@ def hsv_threshold(img, thresh=(170, 255)):
 
 
 def threshold(image, ksize=3):
-    gradx = abs_sobel_thresh(image, orient='x', thresh=(30, 100))
-    grady = abs_sobel_thresh(image, orient='y', thresh=(30, 100))
-    mag_binary = mag_thresh(image, sobel_kernel=ksize, mag_thresh=(40, 100))
+    gradx = abs_sobel_thresh(image, orient='x', thresh=(20, 100))
+    grady = abs_sobel_thresh(image, orient='y', thresh=(20, 100))
+    mag_binary = mag_thresh(image, sobel_kernel=ksize, mag_thresh=(30, 100))
     # dir_binary = dir_threshold(image, sobel_kernel=ksize, thresh=(0.7, 1.3))
-    hsv_binary = hsv_threshold(image, thresh=(130, 255))
+    hsv_binary = hsv_threshold(image, thresh=(100, 255))
 
     combined = np.zeros_like(mag_binary)
 
@@ -197,9 +198,9 @@ def overlay(left_lane, right_lane, img, shape):
     center_point = (shape[1] / 2, shape[0])
     center_distance = distance_from_center(left_lane, right_lane, center_point)
 
-    print("Left curvature", left_curvature)
-    print("Right curvature", right_curvature)
-    print("Center distance", center_distance)
+    # print("Left curvature", left_curvature)
+    # print("Right curvature", right_curvature)
+    # print("Center distance", center_distance)
 
     img = overlay_lane(img, left_lane.pixels_fit(), right_lane.pixels_fit(), TopDownTransform())
 
@@ -215,52 +216,92 @@ def overlay(left_lane, right_lane, img, shape):
     return img
 
 
+objpoints = []
+imgpoints = []
+
 def full_pipeline(input_image):
-    (objpoints, imgpoints) = get_points()
+
+    global objpoints
+    global imgpoints
+
+    if objpoints == [] and imgpoints == []:
+        (objpoints, imgpoints) = get_points()
+
+    # t1 = datetime.now()
+    # print("Undistort")
     output_image = cal_undistort(input_image, objpoints, imgpoints)
+    # t2 = datetime.now()
+    # print("Undistorted", (t2 - t1).microseconds)
 
-    src = np.float32([
-        [300, 707],
-        [580, 463],
-        [750, 463],
-        [1146, 707]
-    ])
+    src = np.float32([[585, 456],
+                     [699, 456],
+                     [1029, 667],
+                     [290, 667]])
 
-    dst = np.float32([
-        [209, 713],
-        [203, 60],
-        [1134, 37],
-        [1191, 707]
-    ])
+    dst = np.float32([[300, 70],
+                     [1000, 70],
+                     [1000, 600],
+                     [300, 600]])
 
-
+    # t3 = datetime.now()
+    # print("Threshold")
     gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
     img_size = (gray.shape[1], gray.shape[0])
     threshold_image = threshold(output_image)
+    # t4 = datetime.now()
+    # print("Thresholded", (t4 - t3).microseconds)
+
+    # t5 = datetime.now()
+    # print("Transform")
     transformed_image = transform(threshold_image, src, dst, img_size)
+    # t6 = datetime.now()
+    # print("Transformed", (t6 - t5).microseconds)
 
     # plt.imshow(transformed_image)
     # plt.show()
 
     # histogram = get_histogram(transformed_image)
 
+    # t7 = datetime.now()
+    # print("Detect lane lines")
     (left_lane, right_lane, out_image) = full_detect_lane_lines(transformed_image)
+    # t8 = datetime.now()
+    # print("Detected lane lines", (t8 - t7).microseconds)
 
     left_fitx, ploty = left_lane.get_lane_fit(transformed_image.shape[0])
     right_fitx, ploty = right_lane.get_lane_fit(transformed_image.shape[0])
 
-    # plt.imshow(out_image)
-    # plt.plot(left_fitx, ploty, color='yellow')
-    # plt.plot(right_fitx, ploty, color='red')
-    # plt.xlim(0, 1280)
-    # plt.ylim(720, 0)
-    # plt.show()
+    plt.imshow(out_image)
+    plt.plot(left_fitx, ploty, color='yellow')
+    plt.plot(right_fitx, ploty, color='red')
+    plt.xlim(0, 1280)
+    plt.ylim(720, 0)
+    plt.show()
 
+    # t9 = datetime.now()
+
+    # print("Overlay")
     img = overlay(left_lane, right_lane, input_image, input_image.shape)
+    # t10 = datetime.now()
+    # print("Overlayed", (t10 - t9).microseconds)
+
     plt.imshow(img)
     plt.show()
 
-    return out_image
+    plt.imshow(out_image)
+    # plt.show()
+
+    return img
 
 
-result = full_pipeline(imread('./test_images/test3.jpg'))
+def convert_video():
+    input_clip = VideoFileClip('./video/project_video.mp4')
+    output_clip = input_clip.fl_image(full_pipeline)
+    output_clip.write_videofile('./output/project_video.mp4', audio=False)
+
+
+# convert_video()
+result = full_pipeline(imread('./test_images/test1.jpg'))
+
+# plt.imshow(result)
+# plt.show()

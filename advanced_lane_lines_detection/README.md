@@ -50,10 +50,10 @@ The following source and destination were retrieved from the image above:
 
 | Source        | Destination   | 
 |:-------------:|:-------------:| 
-| 300, 707      | 209, 713      |
-| 580, 463      | 203, 60       |
-| 750, 463      | 1134, 37      |
-| 1146, 707     | 1191, 707     |
+| 585, 456      | 300, 70       |
+| 699, 456      | 1000, 70      |
+| 1029, 667     | 1000, 600     |
+| 290, 667      | 300, 600      |
 
 
 
@@ -69,14 +69,30 @@ The following histogram shows the sum of the pixel values over the lower half of
 
 ![Lane](solutions/histogram.png)
 
+detect.py has the method full_detect_lane_lines() which takes the image, creates a histogram shown above which has the sum of the values in the image up to half of its height.
+We get the maximum value up to the midpoint and recognize this as the left lane starting point, and then the maximum value from the midpoint until the endpoint and then recognize this as the right lane starting point.
 
-Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
+We then create 9 windows over the height of the image for the left lane and the right lane.
+For each window, we define the height it should be created at, and we use the the starting point we calculated before and calculate a box around it with a margin.
+We then identify the left lane to be the nonzero indices within the left windows and the right lane to be the nonzero indices within the right windows.
+Afterwards, we call get_lane_fit() on the lane which calculates the polynomial fit for these indices.
 
-![alt text][image5]
+The picture below shows the boxes and the lines through the lanes:
+
+![Boxes][solutions/f_boxes.png]
 
 ####5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-I did this in lines # through # in my code in `my_other_file.py`
+in lane.py, the method curvature() calculates the curvature of the lane.
+The curvature of the line is computed as (1 + first_order_derivative_of_line_fit(y)^2)^1.5 / absolute(second_order_derivate_of_line_fit(y)) where y is the image height.
+The distance from the center is computed as:
+ let A be the dot product of the center point (height / 2, width) and TO_METER which is an array of the x meters per pixel and y meters per pixel
+ let B be the first order derivate of the line to fit the left lane
+ let C be the first order derivate of the line to fit the right lane
+
+ The distance from the center is ((B + C) / 2) - A
+
+![Lanes][solutions/f_lanes.png]
 
 ####6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 

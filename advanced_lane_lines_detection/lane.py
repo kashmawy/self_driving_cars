@@ -36,5 +36,5 @@ class Lane:
 
     def get_lane_fit(self, ysize):
         ploty = np.linspace(0, ysize - 1, ysize)
-        line_fit = self.fit()[0] * ploty ** 2 + self.fit()[1] * ploty + self.fit()[2]
+        line_fit = self.pixels_fit()[0] * ploty ** 2 + self.pixels_fit()[1] * ploty + self.pixels_fit()[2]
         return line_fit, ploty
