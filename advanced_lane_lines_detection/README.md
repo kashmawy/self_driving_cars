@@ -16,9 +16,30 @@ An adjacent list called objpoints will contain the chess board corners as they s
 cal_undistort() will be given the image, and both these points (imgpoints, objpoints) and the camera will be calibrated based on this information (The image, where the corners are, where the corners should be).
 This will return the undistorted image.
 
+The following shows an example of a distortion calibration image and after it is being undistorted:
+
+![Distortion Calibration Image](solutions/calibration_image.py]
+
+The following shows an example of a road image before and after calibration:
+
 ![Image Calibrated](solutions/test_1_original_vs_calibrated.png)
 
 ####2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
+
+Current Try:
+
+The code for this step is in solution.py in threshold which calls color_threshold:
+color_threshold aims to get the yellow and white lane lines by multiple methods:
+1. extract the yellow lanes by getting parts of the image that match the range (20, 100, 100) - (50, 255, 255) in HSV
+2. extract the white lanes by getting parts of the image that match the range (0, 0, 187) - (255, 20, 255) in HSV
+3. extract the white lanes by getting parts of the image that match the range (0, 195, 0) - (255, 255, 60) in HSL
+4. extract the white lanes by getting parts of the image that match the range (200, 200, 200) - (255, 255, 255) in RGB
+The result is the or of all the previous.
+
+The following image shown below is the result of applying this:
+![Threshold](solutions/threshold_new.png)
+
+My previous try which did not work as well as this one is the following:
 
 The code for this step is in solution.py in threshold, abs_sobel_thresh, mag_threshold and hsv_threshold
 
@@ -35,6 +56,7 @@ Either (abs_sobel_thresh of 1 for x and abs_sobel_thresh of 1 for y)
 or (mag_threshold of 1 and abs_sobel_thresh of 1 for x)
 or (hsv_threshold of 1)
 
+The following image below is the result of applying this:
 ![Threshold](solutions/threshold.png)
 
 ####3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.

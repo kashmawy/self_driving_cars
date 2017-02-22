@@ -98,18 +98,37 @@ def hsv_threshold(img, thresh=(170, 255)):
     return s_binary
 
 
+def color_threshold(img):
+    hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+
+    yellow = cv2.inRange(hsv, (20, 100, 100), (50, 255, 255))
+
+    sensitivity_1 = 68
+    white = cv2.inRange(hsv, (0, 0, 255-sensitivity_1), (255, 20, 255))
+
+    sensitivity_2 = 60
+    hsl = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
+    white_2 = cv2.inRange(hsl, (0, 255-sensitivity_2, 0), (255, 255, sensitivity_2))
+    white_3 = cv2.inRange(img, (200, 200, 200), (255, 255, 255))
+
+    # s_binary = np.zeros_like(img)
+    # return s_binary[(yellow == 1) | (white_2 == 1) | (white_3 == 1)]
+    return yellow | white | white_2 | white_3
+
+
 def threshold(image, ksize=3):
-    gradx = abs_sobel_thresh(image, orient='x', thresh=(20, 100))
-    grady = abs_sobel_thresh(image, orient='y', thresh=(20, 100))
-    mag_binary = mag_thresh(image, sobel_kernel=ksize, mag_thresh=(30, 100))
+    # gradx = abs_sobel_thresh(image, orient='x', thresh=(20, 100))
+    # grady = abs_sobel_thresh(image, orient='y', thresh=(20, 100))
+    # mag_binary = mag_thresh(image, sobel_kernel=ksize, mag_thresh=(30, 100))
     # dir_binary = dir_threshold(image, sobel_kernel=ksize, thresh=(0.7, 1.3))
-    hsv_binary = hsv_threshold(image, thresh=(100, 255))
+    # hsv_binary = hsv_threshold(image, thresh=(100, 255))
+    color_binary = color_threshold(image)
 
-    combined = np.zeros_like(mag_binary)
+    # combined = np.zeros_like(color_binary)
 
-    combined[(hsv_binary == 1) | ((grady == 1) & (gradx == 1)) | ((mag_binary == 1) & (gradx == 1))] = 1
+    # combined[(hsv_binary == 1)| (color_binary == 1)] = 1
 
-    return combined
+    return color_binary
 
 
 def pipeline(img, s_thresh=(170, 255), sx_thresh=(20, 100)):
@@ -216,7 +235,42 @@ def overlay(left_lane, right_lane, img, shape):
     return img
 
 
-def detect_lane_lines(image):
+def detect_lane_lines(image, last_left_lane=None, last_right_lane=None):
+    if last_left_lane is None or last_right_lane is None:
+        return full_detect_lane_lines(image)
+
+    return detect_lines_from_previous(image, last_left_lane, last_right_lane)
+
+def detect_lines_from_previous(image, last_left_lane, last_right_lane):
+    nonzero = image.nonzero()
+    nonzero_x, nonzero_y = np.array(nonzero[1]), np.array(nonzero[0])
+
+    last_left_p = np.poly1d(last_left_lane.pixels_fit())
+    last_right_p = np.poly1d(last_right_lane.pixels_fit())
+
+    margin = 100
+
+    left_lane_indices = ((nonzero_x > (last_left_p(nonzero_y) - margin)) &
+                         (nonzero_x < (last_left_p(nonzero_y) + margin)))
+
+
+    right_lane_indices = ((nonzero_x > (last_right_p(nonzero_y) - margin)) &
+                          (nonzero_x < (last_right_p(nonzero_y) + margin)))
+
+    # Again, extract left and right line pixel positions
+    left_x = nonzero_x[left_lane_indices]
+    left_y = nonzero_y[left_lane_indices]
+    right_x = nonzero_x[right_lane_indices]
+    right_y = nonzero_y[right_lane_indices]
+
+    if len(left_x) == 0 or len(left_y) == 0 or len(right_x) == 0 or len(right_y) == 0:
+        return (last_left_lane, last_right_lane, image)
+
+
+    return (Lane(left_x, left_y), Lane(right_x, right_y), image)
+
+
+def full_detect_lane_lines(image):
     # Settings
     window_margin = 100          # This will be +/- on left and right sides of the window
     min_pixels_to_recenter = 50  # Minimum number of pixels before recentering the window
@@ -304,11 +358,15 @@ def detect_lane_lines(image):
 
 objpoints = []
 imgpoints = []
+last_left_lane = None
+last_right_lane = None
 
 def full_pipeline(input_image):
 
     global objpoints
     global imgpoints
+    global last_left_lane
+    global last_right_lane
 
     if objpoints == [] and imgpoints == []:
         (objpoints, imgpoints) = get_points()
@@ -329,26 +387,32 @@ def full_pipeline(input_image):
     img_size = (gray.shape[1], gray.shape[0])
     threshold_image = threshold(output_image)
 
+    plt.imshow(threshold_image)
+    plt.show()
+
     transformed_image = transform(threshold_image, src, dst, img_size)
 
-    (left_lane, right_lane, img) = detect_lane_lines(transformed_image)
+    plt.imshow(transformed_image)
+    plt.show()
 
-    left_lane.get_lane_fit(transformed_image.shape[0])
-    right_lane.get_lane_fit(transformed_image.shape[0])
+    (last_left_lane, last_right_lane, img) = detect_lane_lines(transformed_image, last_left_lane, last_right_lane)
 
-    img = overlay(left_lane, right_lane, input_image, input_image.shape)
+    last_left_lane.get_lane_fit(transformed_image.shape[0])
+    last_right_lane.get_lane_fit(transformed_image.shape[0])
+
+    img = overlay(last_left_lane, last_right_lane, input_image, input_image.shape)
 
     return img
 
 
 def convert_video():
-    input_clip = VideoFileClip('./challenge_video.mp4')
+    input_clip = VideoFileClip('./project_video.mp4')
     output_clip = input_clip.fl_image(full_pipeline)
-    output_clip.write_videofile('./output/project_challenge.mp4', audio=False)
+    output_clip.write_videofile('./output/output_video_3.mp4', audio=False)
 
 
-convert_video()
-# result = full_pipeline(imread('./test_images/test1.jpg'))
+# convert_video()
+result = full_pipeline(imread('./test_images/test1.jpg'))
 
 # plt.imshow(result)
 # plt.show()
