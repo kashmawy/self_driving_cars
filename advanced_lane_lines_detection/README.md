@@ -79,7 +79,7 @@ Afterwards, we call get_lane_fit() on the lane which calculates the polynomial f
 
 The picture below shows the boxes and the lines through the lanes:
 
-![Boxes][solutions/f_boxes.png]
+![Boxes](solutions/f_boxes.png)
 
 ####5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
@@ -92,7 +92,7 @@ The distance from the center is computed as:
 
  The distance from the center is ((B + C) / 2) - A
 
-![Lanes][solutions/f_lanes.png]
+![Lanes](solutions/f_lanes.png)
 
 ####6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
