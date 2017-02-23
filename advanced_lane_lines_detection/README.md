@@ -31,6 +31,7 @@ Current Try:
 The code for this step is in solution.py in threshold which calls color_threshold.
 
 color_threshold aims to get the yellow and white lane lines by multiple methods:
+
 1. extract the yellow lanes by getting parts of the image that match the range (20, 100, 100) - (50, 255, 255) in HSV
 2. extract the white lanes by getting parts of the image that match the range (0, 0, 187) - (255, 20, 255) in HSV
 3. extract the white lanes by getting parts of the image that match the range (0, 195, 0) - (255, 255, 60) in HSL
