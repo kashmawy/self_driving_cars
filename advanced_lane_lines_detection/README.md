@@ -28,12 +28,14 @@ The following shows an example of a road image before and after calibration:
 
 Current Try:
 
-The code for this step is in solution.py in threshold which calls color_threshold:
+The code for this step is in solution.py in threshold which calls color_threshold.
+
 color_threshold aims to get the yellow and white lane lines by multiple methods:
 1. extract the yellow lanes by getting parts of the image that match the range (20, 100, 100) - (50, 255, 255) in HSV
 2. extract the white lanes by getting parts of the image that match the range (0, 0, 187) - (255, 20, 255) in HSV
 3. extract the white lanes by getting parts of the image that match the range (0, 195, 0) - (255, 255, 60) in HSL
 4. extract the white lanes by getting parts of the image that match the range (200, 200, 200) - (255, 255, 255) in RGB
+
 The result is the or of all the previous.
 
 The following image shown below is the result of applying this:
