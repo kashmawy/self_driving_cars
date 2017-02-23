@@ -150,6 +150,7 @@ In the challenge video, my pipeline shows some issues: some of the images has in
 I noticed that shadow (from a bridge) particularly confuses the pipeline.
 
 The following are things that could be improved:
+
 1. smoothing algorithm that takes into consideration lanes from previous frame, so if the current lane is very different from the previous frames, it would dismiss it.
 2. source points for bird view transformation close enough to the lane positions so it won't include the road divider if it was approached.
 3. better smoothing the vertical windows in each lane, so if one window is way off, then it won't be included.
