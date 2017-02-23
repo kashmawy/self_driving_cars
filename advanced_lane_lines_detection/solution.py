@@ -124,9 +124,9 @@ def threshold(image, ksize=3):
     # hsv_binary = hsv_threshold(image, thresh=(100, 255))
     color_binary = color_threshold(image)
 
-    # combined = np.zeros_like(color_binary)
+    combined = np.zeros_like(color_binary)
 
-    # combined[(hsv_binary == 1)| (color_binary == 1)] = 1
+    combined[(color_binary == 1)] = 1
 
     return color_binary
 
@@ -383,17 +383,17 @@ def full_pipeline(input_image):
                      [1000, 600],
                      [300, 600]])
 
-    gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(output_image, cv2.COLOR_BGR2GRAY)
     img_size = (gray.shape[1], gray.shape[0])
     threshold_image = threshold(output_image)
 
-    plt.imshow(threshold_image)
+    plt.imshow(threshold_image, cmap='gray')
     plt.show()
 
     transformed_image = transform(threshold_image, src, dst, img_size)
 
-    plt.imshow(transformed_image)
-    plt.show()
+    # plt.imshow(transformed_image)
+    # plt.show()
 
     (last_left_lane, last_right_lane, img) = detect_lane_lines(transformed_image, last_left_lane, last_right_lane)
 
@@ -405,14 +405,14 @@ def full_pipeline(input_image):
     return img
 
 
-def convert_video():
-    input_clip = VideoFileClip('./project_video.mp4')
+def convert_video(invideo, outvideo):
+    input_clip = VideoFileClip(invideo)
     output_clip = input_clip.fl_image(full_pipeline)
-    output_clip.write_videofile('./output/output_video_3.mp4', audio=False)
+    output_clip.write_videofile(outvideo, audio=False)
 
 
-# convert_video()
-result = full_pipeline(imread('./test_images/test1.jpg'))
+convert_video('./challenge_video.mp4', './output/output_video_4.mp4')
+# result = full_pipeline(imread('./test_images/test1.jpg'))
 
 # plt.imshow(result)
 # plt.show()
