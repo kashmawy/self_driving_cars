@@ -387,8 +387,8 @@ def full_pipeline(input_image):
     img_size = (gray.shape[1], gray.shape[0])
     threshold_image = threshold(output_image)
 
-    plt.imshow(threshold_image, cmap='gray')
-    plt.show()
+    # plt.imshow(threshold_image, cmap='gray')
+    # plt.show()
 
     transformed_image = transform(threshold_image, src, dst, img_size)
 
@@ -411,7 +411,7 @@ def convert_video(invideo, outvideo):
     output_clip.write_videofile(outvideo, audio=False)
 
 
-convert_video('./challenge_video.mp4', './output/output_video_4.mp4')
+convert_video('./project_video.mp4', './output/output_video_6.mp4')
 # result = full_pipeline(imread('./test_images/test1.jpg'))
 
 # plt.imshow(result)

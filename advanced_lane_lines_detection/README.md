@@ -147,7 +147,7 @@ Here's a [link to my video result](https://youtu.be/OHRQfqGtE8I)
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 In the challenge video, my pipeline shows some issues: some of the images has incorrect lanes detected.
-I noticed that shadow (from a bridge) and approaching the road divider particularly confuses the pipeline.
+I noticed that shadow (from a bridge) particularly confuses the pipeline.
 
 The following are things that could be improved:
 1. smoothing algorithm that takes into consideration lanes from previous frame, so if the current lane is very different from the previous frames, it would dismiss it.
