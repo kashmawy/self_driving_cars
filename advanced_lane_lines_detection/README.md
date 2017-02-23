@@ -18,7 +18,7 @@ This will return the undistorted image.
 
 The following shows an example of a distortion calibration image and after it is being undistorted:
 
-![Distortion Calibration Image](solutions/calibration_image.py]
+![Distortion Calibration Image](solutions/calibration_image.py)
 
 The following shows an example of a road image before and after calibration:
 
