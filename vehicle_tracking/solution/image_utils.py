@@ -54,10 +54,10 @@ def draw_labeled_bboxes(img, labels):
     # Return the image
     return img
 
-def apply_boxes_with_heat_and_threshold(img, bboxes):
+def apply_boxes_with_heat_and_threshold(img, bboxes, threshold):
     heat = np.zeros_like(img[:, :, 0]).astype(np.float)
     heat = add_heat(heat, bboxes)
-    heat = apply_threshold(heat, 1)
+    heat = apply_threshold(heat, threshold)
     heatmap = np.clip(heat, 0, 255)
     labels = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(img), labels)

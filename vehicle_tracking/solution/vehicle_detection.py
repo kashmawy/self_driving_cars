@@ -86,7 +86,21 @@ def search_windows(img, windows, clf, scaler, color_space='RGB',
     return on_windows
 
 # Define a single function that can extract features using hog sub-sampling and make predictions
-def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins):
+def find_cars(
+    img,
+    ystart,
+    ystop,
+    scale,
+    svc,
+    X_scaler,
+    orient,
+    pix_per_cell,
+    cell_per_block,
+    spatial_size,
+    hist_bins,
+    spatial_feat_flag,
+    hist_feat_flag,
+):
 
     draw_img = np.copy(img)
     img = img.astype(np.float32)/255
@@ -124,6 +138,7 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
             ypos = yb*cells_per_step
             xpos = xb*cells_per_step
             # Extract HOG for this patch
+
             hog_feat1 = hog1[ypos:ypos+nblocks_per_window, xpos:xpos+nblocks_per_window].ravel()
             hog_feat2 = hog2[ypos:ypos+nblocks_per_window, xpos:xpos+nblocks_per_window].ravel()
             hog_feat3 = hog3[ypos:ypos+nblocks_per_window, xpos:xpos+nblocks_per_window].ravel()
@@ -137,11 +152,17 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
             subimg = cv2.resize(ctrans_tosearch[ytop:ytop+window, xleft:xleft+window], (64,64))
 
             # Get color features
-            spatial_features = bin_spatial(subimg, size=spatial_size)
-            # print("Vehicle Detection, Extracting spatial", len(spatial_features))
+            if spatial_feat_flag:
+                spatial_features = bin_spatial(subimg, size=spatial_size)
+            else:
+                spatial_features = []
+                # print("Vehicle Detection, Extracting spatial", len(spatial_features))
 
-            hist_features = color_hist(subimg, nbins=hist_bins)
-            # print("Vehicle Detection, Histogram features", len(hist_features))
+            if hist_feat_flag:
+                hist_features = color_hist(subimg, nbins=hist_bins)
+            else:
+                hist_features = []
+                # print("Vehicle Detection, Histogram features", len(hist_features))
 
             # Scale features and make a prediction
             unscaled_features = np.hstack((spatial_features, hist_features, hog_features)).reshape(1, -1)
