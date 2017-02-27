@@ -1,8 +1,13 @@
 from vehicle_detection import find_cars
 from features_extract import extract_features
-import image_utils
+from image_utils import (
+    draw_labeled_bboxes,
+    apply_threshold,
+    add_heat,
+)
 
 from scipy.misc import imread, imresize, imsave
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
@@ -31,13 +36,13 @@ color_space = 'RGB' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
 orient = 9  # HOG orientations
 pix_per_cell = 8 # HOG pixels per cell
 cell_per_block = 2 # HOG cells per block
-hog_channel = 0 # Can be 0, 1, 2, or "ALL"
+hog_channel = 'ALL' # Can be 0, 1, 2, or "ALL"
 spatial_size = (16, 16) # Spatial binning dimensions
 hist_bins = 16    # Number of histogram bins
 spatial_feat = True # Spatial features on or off
 hist_feat = True # Histogram features on or off
 hog_feat = True # HOG features on or off
-y_start_stop = [None, None] # Min and max in y to search in slide_window()
+y_start_stop = [440, 656] # Min and max in y to search in slide_window()
 
 vehicles_features = extract_features(
     vehicles,
@@ -68,6 +73,7 @@ nonvehicles_features = extract_features(
 )
 print("Extracted Features")
 
+# import pytest; pytest.set_trace()
 X = np.vstack((vehicles_features, nonvehicles_features)).astype(np.float64)
 
 print("Scaling")
@@ -123,7 +129,7 @@ scale = 1.5
 image_path = 'test_images/test1.jpg'
 img = imread(image_path)
 
-out_img = find_cars(
+bboxes = find_cars(
     img,
     ystart,
     ystop,
@@ -137,8 +143,18 @@ out_img = find_cars(
     hist_bins
 )
 
-plt.imshow(out_img)
 print("Detected")
+
+heat = np.zeros_like(img[:,:,0]).astype(np.float)
+import pytest; pytest.set_trace()
+heat = add_heat(heat,bboxes)
+heat = apply_threshold(heat,1)
+heatmap = np.clip(heat, 0, 255)
+labels = label(heatmap)
+draw_img = draw_labeled_bboxes(np.copy(image), labels)
+
+plt.imshow(draw_img)
+plt.show()
 
 
 #

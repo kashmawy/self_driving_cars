@@ -19,6 +19,7 @@ def add_heat(heatmap, bbox_list):
     for box in bbox_list:
         # Add += 1 for all pixels inside each bbox
         # Assuming each "box" takes the form ((x1, y1), (x2, y2))
+        import pytest; pytest.set_trace()
         heatmap[box[0][1]:box[1][1], box[0][0]:box[1][0]] += 1
 
     # Return updated heatmap

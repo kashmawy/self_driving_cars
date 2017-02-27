@@ -71,10 +71,12 @@ def extract_features(imgs, color_space='RGB', spatial_size=(32, 32),
 
         if spatial_feat == True:
             spatial_features = bin_spatial(feature_image, size=spatial_size)
+            # print("Feature Extract, Extracting spatial", len(spatial_features))
             file_features.append(spatial_features)
         if hist_feat == True:
             # Apply color_hist()
             hist_features = color_hist(feature_image, nbins=hist_bins)
+            # print("Feature Extract, Extracting histogram features", len(hist_features))
             file_features.append(hist_features)
         if hog_feat == True:
         # Call get_hog_features() with vis=False, feature_vec=True
@@ -88,6 +90,7 @@ def extract_features(imgs, color_space='RGB', spatial_size=(32, 32),
             else:
                 hog_features = get_hog_features(feature_image[:,:,hog_channel], orient,
                             pix_per_cell, cell_per_block, vis=False, feature_vec=True)
+                # print("Feature Extract, Extracting hog features", len(hog_features))
             # Append the new feature vector to the features list
             file_features.append(hog_features)
         features.append(np.concatenate(file_features))

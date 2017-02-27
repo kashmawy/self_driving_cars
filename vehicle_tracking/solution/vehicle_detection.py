@@ -117,6 +117,8 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
     hog2 = get_hog_features(ch2, orient, pix_per_cell, cell_per_block, feature_vec=False)
     hog3 = get_hog_features(ch3, orient, pix_per_cell, cell_per_block, feature_vec=False)
 
+    bboxes = []
+
     for xb in range(nxsteps):
         for yb in range(nysteps):
             ypos = yb*cells_per_step
@@ -126,6 +128,7 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
             hog_feat2 = hog2[ypos:ypos+nblocks_per_window, xpos:xpos+nblocks_per_window].ravel()
             hog_feat3 = hog3[ypos:ypos+nblocks_per_window, xpos:xpos+nblocks_per_window].ravel()
             hog_features = np.hstack((hog_feat1, hog_feat2, hog_feat3))
+            # print("Vehicle Detection, Hog Features", len(hog_features))
 
             xleft = xpos*pix_per_cell
             ytop = ypos*pix_per_cell
@@ -135,10 +138,15 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
 
             # Get color features
             spatial_features = bin_spatial(subimg, size=spatial_size)
+            # print("Vehicle Detection, Extracting spatial", len(spatial_features))
+
             hist_features = color_hist(subimg, nbins=hist_bins)
+            # print("Vehicle Detection, Histogram features", len(hist_features))
 
             # Scale features and make a prediction
-            test_features = X_scaler.transform(np.hstack((spatial_features, hist_features, hog_features)).reshape(1, -1))
+            unscaled_features = np.hstack((spatial_features, hist_features, hog_features)).reshape(1, -1)
+            # import pytest; pytest.set_trace()
+            test_features = X_scaler.transform(unscaled_features)
             #test_features = X_scaler.transform(np.hstack((shape_feat, hist_feat)).reshape(1, -1))
             test_prediction = svc.predict(test_features)
 
@@ -146,6 +154,6 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
                 xbox_left = np.int(xleft*scale)
                 ytop_draw = np.int(ytop*scale)
                 win_draw = np.int(window*scale)
-                cv2.rectangle(draw_img,(xbox_left, ytop_draw+ystart),(xbox_left+win_draw,ytop_draw+win_draw+ystart),(0,0,255),6)
+                bboxes += [[(xbox_left, ytop_draw+ystart)], [(xbox_left+win_draw,ytop_draw+win_draw+ystart)]]
 
-    return draw_img
+    return bboxes
