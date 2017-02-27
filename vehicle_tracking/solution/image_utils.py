@@ -1,6 +1,7 @@
 from scipy.misc import imread, imresize, imsave
 import cv2
 import numpy as np
+from scipy.ndimage.measurements import label
 
 # Define a function to draw bounding boxes
 def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
@@ -19,7 +20,6 @@ def add_heat(heatmap, bbox_list):
     for box in bbox_list:
         # Add += 1 for all pixels inside each bbox
         # Assuming each "box" takes the form ((x1, y1), (x2, y2))
-        import pytest; pytest.set_trace()
         heatmap[box[0][1]:box[1][1], box[0][0]:box[1][0]] += 1
 
     # Return updated heatmap
@@ -53,3 +53,12 @@ def draw_labeled_bboxes(img, labels):
         cv2.rectangle(img, bbox[0], bbox[1], (0,0,255), 6)
     # Return the image
     return img
+
+def apply_boxes_with_heat_and_threshold(img, bboxes):
+    heat = np.zeros_like(img[:, :, 0]).astype(np.float)
+    heat = add_heat(heat, bboxes)
+    heat = apply_threshold(heat, 1)
+    heatmap = np.clip(heat, 0, 255)
+    labels = label(heatmap)
+    draw_img = draw_labeled_bboxes(np.copy(img), labels)
+    return draw_img

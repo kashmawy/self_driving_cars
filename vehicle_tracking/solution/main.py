@@ -4,6 +4,7 @@ from image_utils import (
     draw_labeled_bboxes,
     apply_threshold,
     add_heat,
+    apply_boxes_with_heat_and_threshold,
 )
 
 from scipy.misc import imread, imresize, imsave
@@ -25,8 +26,8 @@ nonvehicles = glob.glob('./non-vehicles/*/*.png')
 print("Loaded Images")
 
 ## only for debugging
-vehicles = vehicles[0:10]
-nonvehicles = nonvehicles[0:10]
+vehicles = vehicles[0:50]
+nonvehicles = nonvehicles[0:50]
 
 
 ## Training
@@ -145,14 +146,7 @@ bboxes = find_cars(
 
 print("Detected")
 
-heat = np.zeros_like(img[:,:,0]).astype(np.float)
-import pytest; pytest.set_trace()
-heat = add_heat(heat,bboxes)
-heat = apply_threshold(heat,1)
-heatmap = np.clip(heat, 0, 255)
-labels = label(heatmap)
-draw_img = draw_labeled_bboxes(np.copy(image), labels)
-
+draw_img = apply_boxes_with_heat_and_threshold(img, bboxes)
 plt.imshow(draw_img)
 plt.show()
 
