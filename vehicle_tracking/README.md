@@ -35,9 +35,9 @@ The code for training the SVM is in main.py.
 
 I trained SVM using the following features:
 
-1. Spatial binning (bin_spatial)
-2. Color Histogram (color_hist)
-3. HOG (get_hog_features)
+1. Spatial binning (bin_spatial in features_extract.py)
+2. Color Histogram (color_hist in features_extract.py)
+3. HOG (get_hog_features in features_extract.py)
 
 These are then concatenated by extract_features.
 In main.py, all these are converted into a flat array, then afterwards fed into a Standard Scaler by removing the mean and scaling to unit variance.
