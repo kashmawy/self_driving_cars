@@ -1,10 +1,15 @@
-from vehicle_detection import find_cars
+from vehicle_detection import (
+    find_cars,
+    slide_window,
+    search_windows,
+)
 from features_extract import extract_features
 from image_utils import (
     draw_labeled_bboxes,
     apply_threshold,
     add_heat,
     apply_boxes_with_heat_and_threshold,
+    draw_boxes,
 )
 
 from scipy.misc import imread, imresize, imsave
@@ -33,9 +38,9 @@ print("Loaded Images")
 ## Training
 
 print("Extracting Features")
-color_space = 'RGB' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
-orient = 9  # HOG orientations
-pix_per_cell = 5 # HOG pixels per cell
+color_space = 'YCrCb' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
+orient = 8  # HOG orientations
+pix_per_cell = 6 # HOG pixels per cell
 cell_per_block = 2 # HOG cells per block
 hog_channel = 'ALL' # Can be 0, 1, 2, or "ALL"
 spatial_size = (16, 16) # Spatial binning dimensions
@@ -128,25 +133,38 @@ for image_path in images:
 
     img = imread(image_path)
 
+    # windows = slide_window(img, x_start_stop=[None, None], y_start_stop=y_start_stop,
+    #                        xy_window=(96, 96), xy_overlap=(0.5, 0.5))
+    #
+    # hot_windows = search_windows(img, windows, svc, X_scaler, color_space=color_space,
+    #                              spatial_size=spatial_size, hist_bins=hist_bins,
+    #                              orient=orient, pix_per_cell=pix_per_cell,
+    #                              cell_per_block=cell_per_block,
+    #                              hog_channel=hog_channel, spatial_feat=spatial_feat,
+    #                              hist_feat=hist_feat, hog_feat=hog_feat)
+
     bboxes = find_cars(
-        img,
-        ystart,
-        ystop,
-        scale,
-        svc,
-        X_scaler,
-        orient,
-        pix_per_cell,
-        cell_per_block,
-        spatial_size,
-        hist_bins,
-        spatial_feat,
-        hist_feat,
-    )
+            img,
+            ystart,
+            ystop,
+            scale,
+            svc,
+            X_scaler,
+            orient,
+            pix_per_cell,
+            cell_per_block,
+            spatial_size,
+            hist_bins,
+            spatial_feat,
+            hist_feat,
+        )
 
     print("Detected")
 
+    import pytest; pytest.set_trace()
+
     draw_img = apply_boxes_with_heat_and_threshold(img, bboxes, 3)
+    # draw_img = draw_boxes(img, bboxes)
     plt.imshow(draw_img)
     plt.show()
 

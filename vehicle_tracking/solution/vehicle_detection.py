@@ -6,6 +6,7 @@ from features_extract import (
     get_hog_features,
     bin_spatial,
     color_hist,
+    single_img_features,
 )
 
 # Define a function that takes an image,
