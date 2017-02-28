@@ -6,10 +6,10 @@
 
 The code for this is in get_hog_features, which given an image and orient, pix_per_cell, cell_per_block and feature_vec extracts the HOG features in an image.
 
-The following shows a vehicle with the corresponding HOG for the R Channel:
+The following shows a vehicle with the corresponding HOG for the R Channel
 ![Vehicle with HOG](output_images/vehicle_with_hog.png)
 
-The following shows a non vehicle with the corresponding HOG for the R Channel:
+The following shows a non vehicle with the corresponding HOG for the R Channel
 ![Non Vehicle with HOG](output_images/nonvehicle_with_hog.png)
 
 These hog visualization are for images in RGB format for only the R channel with the following setting:
