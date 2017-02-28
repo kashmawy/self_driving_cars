@@ -13,6 +13,7 @@ The following shows a non vehicle with the corresponding HOG for the R Channel
 ![Non Vehicle with HOG](output_images/nonvehicle_with_hog.png)
 
 These hog visualization are for images in RGB format for only the R channel with the following setting:
+
 1. orient of 9
 2. pixels per cell of 5
 3. cells per block of 2
@@ -33,6 +34,7 @@ The code for this is in features_extract.py in the following methods extract_fea
 The code for training the SVM is in main.py.
 
 I trained SVM using the following features:
+
 1. Spatial binning (bin_spatial)
 2. Color Histogram (color_hist)
 3. HOG (get_hog_features)
