@@ -20,17 +20,35 @@ These hog visualization are for images in RGB format for only the R channel with
 
 ####2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters and...
+I tried various parameters for HOG, and orient of 9, pixels per cell of 5 and cells per block of 2 seems to give the best results.
+
+I tried using a much larger orient (e.g. 20), however that seemed to create so many bins for the different orientation and be more sensntive to differences in orientation even if they are close and not show matches.
+I tried using bigger pixels per cell (e.g. 9), however that seemed to put a large area in one cell and the larger this number became, the harder it became to have a match because it must match a bigger portion now in order to match.
+When pixels per cell is too small (e.g. 2) it causes a much smaller area to be in one cell and causes too many false positives because now matches doesn't really match enough cells to indicate that it is the same shape (vehicle or not)
+Cells per block had the same behaviour.
 
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM using...
+The code for this is in features_extract.py in the following methods extract_features, bin_spatial, color_hist, get_hog_features.
+The code for training the SVM is in main.py.
+
+I trained SVM using the following features:
+1. Spatial binning (bin_spatial)
+2. Color Histogram (color_hist)
+3. HOG (get_hog_features)
+
+These are then concatenated by extract_features.
+In main.py, all these are converted into a flat array, then afterwards fed into a Standard Scaler by removing the mean and scaling to unit variance.
+Afterwards a support vector machine is trained using that data.
+We have 8792 vehicle images and 8968 non vehicle images.
+Off this data, 20% is reserved for testing and the rest 80% is used for training.
+
 
 ###Sliding Window Search
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
+The sliding window search code can be found in vehicle_detection.py in find_cars
 
 ![alt text][image3]
 
