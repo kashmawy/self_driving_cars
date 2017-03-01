@@ -6,22 +6,22 @@
 
 The code for this is in get_hog_features, which given an image and orient, pix_per_cell, cell_per_block and feature_vec extracts the HOG features in an image.
 
-The following shows a vehicle with the corresponding HOG for the R Channel
+The following shows a vehicle, and the image transformed to YrCb, and the corresponding HOG for the first channel of YrCb:
 ![Vehicle with HOG](output_images/vehicle_with_hog.png)
 
 The following shows a non vehicle with the corresponding HOG for the R Channel
 ![Non Vehicle with HOG](output_images/nonvehicle_with_hog.png)
 
-These hog visualization are for images in RGB format for only the R channel with the following setting:
+These hog visualization are for images in YrCb format for only the first channel with the following setting:
 
 1. orient of 9
-2. pixels per cell of 5
+2. pixels per cell of 4
 3. cells per block of 2
 
 
 ####2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various parameters for HOG, and orient of 9, pixels per cell of 5 and cells per block of 2 seems to give the best results.
+I tried various parameters for HOG, and orient of 9, pixels per cell of 4 and cells per block of 2 seems to give the best results.
 
 I tried using a much larger orient (e.g. 20), however that seemed to create so many bins for the different orientation and be more sensntive to differences in orientation even if they are close and not show matches.
 I tried using bigger pixels per cell (e.g. 9), however that seemed to put a large area in one cell and the larger this number became, the harder it became to have a match because it must match a bigger portion now in order to match.

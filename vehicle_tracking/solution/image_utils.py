@@ -2,6 +2,7 @@ from scipy.misc import imread, imresize, imsave
 import cv2
 import numpy as np
 from scipy.ndimage.measurements import label
+from moviepy.editor import VideoFileClip
 
 # Define a function to draw bounding boxes
 def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
@@ -25,10 +26,10 @@ def add_heat(heatmap, bbox_list):
     # Return updated heatmap
     return heatmap# Iterate through list of bboxes
 
+
 def apply_threshold(heatmap, threshold):
     # Zero out pixels below the threshold
     heatmap[heatmap <= threshold] = 0
-    # Return thresholded map
     return heatmap
 
 def convert_color(img, conv='RGB2YCrCb'):
@@ -39,8 +40,9 @@ def convert_color(img, conv='RGB2YCrCb'):
     if conv == 'RGB2LUV':
         return cv2.cvtColor(img, cv2.COLOR_RGB2LUV)
 
-def draw_labeled_bboxes(img, labels):
+def get_labeled_bboxes(labels):
     # Iterate through all detected cars
+    boxes = []
     for car_number in range(1, labels[1]+1):
         # Find pixels with each car_number label value
         nonzero = (labels[0] == car_number).nonzero()
@@ -48,19 +50,21 @@ def draw_labeled_bboxes(img, labels):
         nonzeroy = np.array(nonzero[0])
         nonzerox = np.array(nonzero[1])
         # Define a bounding box based on min/max x and y
-        bbox = ((np.min(nonzerox), np.min(nonzeroy)), (np.max(nonzerox), np.max(nonzeroy)))
-        # Draw the box on the image
-        cv2.rectangle(img, bbox[0], bbox[1], (0,0,255), 6)
-    # Return the image
-    return img
+        bbox = [[(np.min(nonzerox), np.min(nonzeroy)), (np.max(nonzerox), np.max(nonzeroy))]]
+        boxes += bbox
+    return boxes
 
-def apply_boxes_with_heat_and_threshold(img, bboxes, threshold):
+def apply_boxes_with_heat_and_threshold(img, bboxes, threshold, previous_boxes_list=[]):
     heat = np.zeros_like(img[:, :, 0]).astype(np.float)
     heat = add_heat(heat, bboxes)
+    if previous_boxes_list is not None:
+        for previous_box in previous_boxes_list:
+            heat = add_heat(heat, previous_box)
     heat = apply_threshold(heat, threshold)
     heatmap = np.clip(heat, 0, 255)
     labels = label(heatmap)
-    draw_img = draw_labeled_bboxes(np.copy(img), labels)
+    boxes = get_labeled_bboxes(labels)
+    draw_img = draw_boxes(img, boxes)
     return draw_img
 
 # Define a function to draw bounding boxes
@@ -73,3 +77,8 @@ def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
         cv2.rectangle(imcopy, bbox[0], bbox[1], color, thick)
     # Return the image copy with boxes drawn
     return imcopy
+
+def convert_video(invideo, outvideo, full_pipeline):
+    input_clip = VideoFileClip(invideo)
+    output_clip = input_clip.fl_image(full_pipeline)
+    output_clip.write_videofile(outvideo, audio=False)
