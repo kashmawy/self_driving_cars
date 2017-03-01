@@ -65,7 +65,7 @@ def apply_boxes_with_heat_and_threshold(img, bboxes, threshold, previous_boxes_l
     labels = label(heatmap)
     boxes = get_labeled_bboxes(labels)
     draw_img = draw_boxes(img, boxes)
-    return draw_img
+    return (draw_img, heatmap, labels)
 
 # Define a function to draw bounding boxes
 def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):

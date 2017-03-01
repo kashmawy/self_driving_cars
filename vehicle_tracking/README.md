@@ -107,14 +107,17 @@ This is done using the following process:
 
 ### Here are six frames and their corresponding heatmaps:
 
-![alt text][image5]
+ The first sub-image is the image with the bounding boxes, the second one is the heatmap and the third one is the one with the labels.
 
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
+![heatmap 1](output_images/heatmap_1.png)
 
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
+![heatmap 2](output_images/heatmap_2.png)
 
+![heatmap 3](output_images/heatmap_3.png)
+
+![heatmap 4](output_images/heatmap_4.png)
+
+As we can see the heatmap is very bright in areas where the car exist, and then the result of this heatmap is then fed into labels which is used to draw the bounding boxes.
 
 
 ---
@@ -123,5 +126,20 @@ This is done using the following process:
 
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+The main problems I faced was the following:
 
+1. Using only one image sometimes would yield false positives if the extraction parameters are too sensitive (i.e. low HOG orient and low pixels per cell).
+
+  For this issue I used the previous 13 images and increased the threshold which removed a lot of these false positives.
+  However this came with a price, which is, the bounding box appear a bit lagged (since it used a lot of signal from previous images).
+  Moreover if in multiple subsequent images no cars were detected even if it did exist (which happened very rarely), this approach would not catch it.
+
+2. If two cars are very close to each other, the algorithm cannot distinguish between them and think it is one big car.
+
+  As per the pipeline described above, the algorithm is not good at detecting these cases. If two cars were very close to each other, the algorithm thinks it is one big car and cannot distinguish them.
+
+If i were to pursue this project further, I would:
+
+1. Spend more time getting more data to train the SVM model, so that the model is more robust at finding matches.
+2. I would fine tune the parameters of the extraction even further so that the SVM model would have very little false positives.
+3. I would also spend more time to make previous images that have bounding boxes that overlap the current bounding box boost the current bounding box, which would know show lagged bounding boxes as is the case currently.
