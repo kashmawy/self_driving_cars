@@ -6,13 +6,13 @@
 
 The code for this is in get_hog_features, which given an image and orient, pix_per_cell, cell_per_block and feature_vec extracts the HOG features in an image.
 
-The following shows a vehicle, and the image transformed to YrCb, and the corresponding HOG for the first channel of YrCb:
+The following shows a vehicle, and the image transformed to YCrCb, and the corresponding HOG for the first channel of YCrCb:
 ![Vehicle with HOG](output_images/vehicle_with_hog.png)
 
 The following shows a non vehicle with the corresponding HOG for the R Channel
 ![Non Vehicle with HOG](output_images/nonvehicle_with_hog.png)
 
-These hog visualization are for images in YrCb format for only the first channel with the following setting:
+These hog visualization are for images in YCrCb format for only the first channel with the following setting:
 
 1. orient of 9
 2. pixels per cell of 4
@@ -50,9 +50,21 @@ Off this data, 20% is reserved for testing and the rest 80% is used for training
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-The sliding window search code can be found in vehicle_detection.py in find_cars
+The sliding window search is in vehicle_detection.py find_cars().
+The algorithm begin by:
 
-![alt text][image3]
+1. Copying the image
+2. Cropping the part we are not interested in searching (we only keep from 400 to 656 since the rest is the sky / trees).
+3. Converting the image to YCrCb
+4. Scaling the image by 1.5
+5. We divide the image into 64 windows, each window has 16 blocks (blocks = windows / pixels per cells = 64 / 4 = 16)
+6. Each time we move the window 2 cells
+7. We extract HOG for all the channels for the entire image in a temporary variable (A)
+8. We iterate over the image in the X direction and Y direction each time moving 2 cells
+9. For each iteration we extract the current block, and get the block corresponding HOG from the temporary variable A. We concatenate that to bin spatial of the image resized to (16, 16). We concatenate that to the color histogram of 16 bins.
+10. We take this result and perform standard scaling on it (mean and scaling to unit variance) like we did with the training data.
+11. We then feed this into our SVM model to predict if it is a car or not.
+12. If this is a car, then we capture the rectangle coordinates and add it to the list.
 
 ####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
@@ -77,9 +89,7 @@ Here's a [link to my video result](https://youtu.be/hS5kO_Yvutc)
 
 ####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
 
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
 
 ### Here are six frames and their corresponding heatmaps:
 
