@@ -177,14 +177,13 @@ def detect(image):
             hist_feat,
         )
 
-    # was 13
-    (draw_img, heatmap, labels) = apply_boxes_with_heat_and_threshold(image, bboxes, 1, previous_boxes_list)
+    draw_img = apply_boxes_with_heat_and_threshold(image, bboxes, 13, previous_boxes_list)
 
-    # previous_boxes_list += [bboxes]
-    # if len(previous_boxes_list) == 16:
-    #     del previous_boxes_list[0]
+    previous_boxes_list += [bboxes]
+    if len(previous_boxes_list) == 16:
+        del previous_boxes_list[0]
 
-    return (draw_img, heatmap, labels)
+    return draw_img
 
 
 args = parser.parse_args()
@@ -200,24 +199,24 @@ else:
     (vehicles, nonvehicles) = load()
     model = train(vehicles, nonvehicles)
 
-# convert_video(args.video, args.output, detect)
+convert_video(args.video, args.output, detect)
 
-images = [
-    'test_images/test1.jpg',
-    'test_images/test2.jpg',
-    'test_images/test3.jpg',
-    'test_images/test4.jpg',
-    'test_images/test5.jpg',
-    'test_images/test6.jpg',
-]
-for image_path in images:
-    img = imread(image_path)
-    (draw_img, heatmap, labels) = detect(img)
-    plt.subplot(3, 1, 1)
-    plt.imshow(draw_img)
-    plt.subplot(3, 1, 2)
-    plt.imshow(heatmap, cmap='hot')
-    plt.subplot(3, 1, 3)
-    plt.imshow(labels[0])
-    plt.plot()
-    plt.show()
+# images = [
+#     'test_images/test1.jpg',
+#     'test_images/test2.jpg',
+#     'test_images/test3.jpg',
+#     'test_images/test4.jpg',
+#     'test_images/test5.jpg',
+#     'test_images/test6.jpg',
+# ]
+# for image_path in images:
+#     img = imread(image_path)
+#     (draw_img, heatmap, labels) = detect(img)
+#     plt.subplot(3, 1, 1)
+#     plt.imshow(draw_img)
+#     plt.subplot(3, 1, 2)
+#     plt.imshow(heatmap, cmap='hot')
+#     plt.subplot(3, 1, 3)
+#     plt.imshow(labels[0])
+#     plt.plot()
+#     plt.show()
