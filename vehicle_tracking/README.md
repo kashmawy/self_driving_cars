@@ -57,11 +57,11 @@ The algorithm begin by:
 2. Cropping the part we are not interested in searching (we only keep from 400 to 656 since the rest is the sky / trees).
 3. Converting the image to YCrCb
 4. Scaling the image by 1.5
-5. We divide the image into 64 windows, each window has 16 blocks (blocks = windows / pixels per cells = 64 / 4 = 16)
-6. Each time we move the window 2 cells
+5. We divide the image into 64 windows, each window has 15 blocks (blocks = (windows / pixels per cells) - 1 = (64 / 4) - 1 = 15)
+6. Each time we move the window 2 cells, and we capture the entire window (15 blocks * 4 = 60 cells). This is an overlap of 96.6% (100 percent - ((cell movement / total number of cells) * 100) = 100 - ((2/60) * 100))
 7. We extract HOG for all the channels for the entire image in a temporary variable (A)
 8. We iterate over the image in the X direction and Y direction each time moving 2 cells
-9. For each iteration we extract the current block, and get the block corresponding HOG from the temporary variable A. We concatenate that to bin spatial of the image resized to (16, 16). We concatenate that to the color histogram of 16 bins.
+9. For each iteration we extract the current window, and get the window corresponding HOG from the temporary variable A. We concatenate that to bin spatial of the window resized to (16, 16). We concatenate that to the color histogram of the window for 16 bins.
 10. We take this result and perform standard scaling on it (mean and scaling to unit variance) like we did with the training data.
 11. We then feed this into our SVM model to predict if it is a car or not.
 12. If this is a car, then we capture the rectangle coordinates and add it to the list.
@@ -89,7 +89,21 @@ Here's a [link to my video result](https://youtu.be/hS5kO_Yvutc)
 
 ####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
+The code for this can be found in image_utils.py in apply_boxes_with_heat_and_threshold and is called from main.py in detect.
 
+We combine overlapping windows and filter false positives by two means:
+
+1. Overlaps from the same image
+2. Overlaps of recent images (The 15 previous images).
+
+This is done using the following process:
+
+1. Initialize a heatmap of all zeros with the same image size
+2. For each bounding box, we add 1 to all the pixels inside of it
+3. Up to the previous 15 images if they exist, we also add 1 to all the pixels of all the bounding boxes that was detected in each one of them.
+4. We apply a threshold of 13 to remove all false positives and only leave cars that was detected in this image and confirmed by multiple bounding boxes in this image and in previous images.
+5. We then extract only the boxes that have met this threshold.
+6. We then draw the boxes on the image.
 
 ### Here are six frames and their corresponding heatmaps:
 
