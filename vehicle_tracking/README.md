@@ -56,9 +56,17 @@ The sliding window search code can be found in vehicle_detection.py in find_cars
 
 ####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+I had to tweak the parameters for HOG (orient, pixels per cell and cells per block) along with spatial bin size and color histogram size.
+The HOG orient and pixels per cell particularly seemed to make the classifier more sensitive (as orient decreases and pixels decreases) or less sensitive (as orient increases and pixels increases).
+Eventually orient of 9, pixels per cell of 4 and cells per block of 2 seemed to give the best results. Along with (16, 16) spatial binning and 16 color histogram containers.
 
-![alt text][image4]
+The following are examples of vehicles detected in test images:
+
+![tracked 1](output_images/tracked_1.png)
+![tracked 2](output_images/tracked_2.png)
+![tracked 3](output_images/tracked_3.png)
+![tracked 4](output_images/tracked_4.png)
+
 ---
 
 ### Video Implementation
