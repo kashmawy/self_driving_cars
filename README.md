@@ -2,7 +2,7 @@
 
 Projects for Self Driving Cars:
 
-1. [Lane Lines Detection](tree/master/lane_lines_detection/)
+1. [Lane Lines Detection](lane_lines_detection/)
 2. Advanced Lane Detection: <>
 3. Driving behavior Cloning with Deep Learning: <>
 4. Vehicle Tracking using SVM: <>
