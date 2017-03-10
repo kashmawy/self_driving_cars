@@ -7,7 +7,7 @@ Installation:
 1. mkdir weights/
 2. Get the weight from https://drive.google.com/file/d/0B2JbaJSrWLpza0FtQlc3ejhMTTA/view?usp=sharing and place it under weights/
 
-To run: yolo.py --type='image' --input='<image path>'
+To run: yolo.py --type=image --input=<image path>
 
 
 ## Pipeline
