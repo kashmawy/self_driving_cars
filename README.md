@@ -7,6 +7,7 @@ Projects for Self Driving Cars:
 3. [Traffic Sign Classification with Deep Learning](traffic_sign_classifier/): Using Convolutional Neural Network to classify traffic signs in images.
 4. [Driving behavior Cloning with Deep Learning](behavior_cloning_deep_learning/): Using Convolutional Neural Network to clone driving behavior in a simulator and drive autonomously in a simulator.
 5. [Vehicle Tracking using SVM](vehicle_tracking/): Tracking the locations of a vehicle in a video using Support Vector Machines.
+6. [Object detection using YOLO)(object_detection_YOLO/): Object detection using You Only Look Once (YOLO).
 
 Other Misc Projects in the same area:
 
