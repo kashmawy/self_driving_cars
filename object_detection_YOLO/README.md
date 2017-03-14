@@ -37,13 +37,14 @@ The YOLO pipeline is as follows:
 | Fully Connected                                  | 1470                     |
 
 2. Load the weights as the model have already been trained to assign it to the layers.
-3. Load the image, resize it into (448, 448)
-4. Convert it from BGR to BRG
+3. Load the image, resize it into (448, 448).
+4. Convert it from BGR to BRG.
 5. Normalize it by dividing over 255.0, multiplying by 2.0 and subtracting 1.0
-6. Feed that into the model
+6. Feed that into the model.
 7. Take the result from 0 to 980 as the class probabilities. We have 20 classes.
-8. Take the result from 980 to 1078 as the scales of the boxes.
-9. Take the result from 1078 to 1470 as the boxes.
+8. Filter out of that those that are less than the threshold (currently set to 0.2).
+9. Take the result from 980 to 1078 as the scales of the boxes.
+10. Take the result from 1078 to 1470 as the boxes.
 
 ## Object Detection
 The following image shows a sofa being detected:
