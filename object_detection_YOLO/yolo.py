@@ -15,8 +15,8 @@ class YOLO:
     alpha = 0.1
     weights_file = 'weights/YOLO_tiny.ckpt'
     input_size = (448, 448)
-    threshold = 0.2
-    iou_threshold = 0.5
+    threshold = 0.05
+    iou_threshold = 0.4
     classes = ["aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
                "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"] # 20 classes
 
