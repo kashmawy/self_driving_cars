@@ -235,3 +235,12 @@ class Network(object):
                     tf.cast(input_shape[1], tf.float32) * (
                     tf.cast(input_shape[3], tf.float32) / tf.cast(d, tf.float32)), tf.int32), input_shape[2]]),
                                 [0, 2, 3, 1], name=name)
+
+
+    def get_output(self, layer):
+        try:
+            layer = self.layers[layer]
+        except KeyError:
+            print self.layers.keys()
+            raise KeyError('Unknown layer name fed: %s'%layer)
+        return layer
