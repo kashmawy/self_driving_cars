@@ -228,8 +228,6 @@ if __name__ == '__main__':
     saver = tf.train.Saver(write_version=tf.train.SaverDef.V1)
     saver.restore(session, args.model)
 
-    # demo(session, network, args.image_path)
-    # plt.show()
     image = cv2.imread(args.image_path)
     scores, boxes = detect(session, network, image)
     print('Found {:d} object proposals').format(boxes.shape[0])

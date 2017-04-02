@@ -8,6 +8,7 @@ Projects for Self Driving Cars:
 4. [Driving behavior Cloning with Deep Learning](behavior_cloning_deep_learning/): Using Convolutional Neural Network to clone driving behavior in a simulator and drive autonomously in a simulator.
 5. [Vehicle Tracking using SVM](vehicle_tracking/): Tracking the locations of a vehicle in a video using Support Vector Machines.
 6. [Object detection using YOLO](object_detection_YOLO/): Object detection using You Only Look Once (YOLO).
+7. [Object detection using faster RCNN](object_detection_faster_RCNN/): Object detection using faster RCNN.
 
 Other Misc Projects in the same area:
 
