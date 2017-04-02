@@ -92,19 +92,19 @@ def _project_im_rois(im_rois, scales):
 
 def _get_blobs(im, rois):
     """Convert an image and RoIs within that image into network inputs."""
-    if cfg.TEST.HAS_RPN:
-        blobs = {'data' : None, 'rois' : None}
-        blobs['data'], im_scale_factors = _get_image_blob(im)
-    else:
-        blobs = {'data' : None, 'rois' : None}
-        blobs['data'], im_scale_factors = _get_image_blob(im)
-        if cfg.IS_MULTISCALE:
-            if cfg.IS_EXTRAPOLATING:
-                blobs['rois'] = _get_rois_blob(rois, cfg.TEST.SCALES)
-            else:
-                blobs['rois'] = _get_rois_blob(rois, cfg.TEST.SCALES_BASE)
-        else:
-            blobs['rois'] = _get_rois_blob(rois, cfg.TEST.SCALES_BASE)
+    # if cfg.TEST.HAS_RPN:
+    blobs = {'data' : None, 'rois' : None}
+    blobs['data'], im_scale_factors = _get_image_blob(im)
+    # else:
+    #     blobs = {'data' : None, 'rois' : None}
+    #     blobs['data'], im_scale_factors = _get_image_blob(im)
+    #     if cfg.IS_MULTISCALE:
+    #         if cfg.IS_EXTRAPOLATING:
+    #             blobs['rois'] = _get_rois_blob(rois, cfg.TEST.SCALES)
+    #         else:
+    #             blobs['rois'] = _get_rois_blob(rois, cfg.TEST.SCALES_BASE)
+    #     else:
+    #         blobs['rois'] = _get_rois_blob(rois, cfg.TEST.SCALES_BASE)
 
     return blobs, im_scale_factors
 
@@ -148,68 +148,68 @@ def im_detect(sess, net, im, boxes=None):
     # (some distinct image ROIs get mapped to the same feature ROI).
     # Here, we identify duplicate feature ROIs, so we only compute features
     # on the unique subset.
-    if cfg.DEDUP_BOXES > 0 and not cfg.TEST.HAS_RPN:
-        v = np.array([1, 1e3, 1e6, 1e9, 1e12])
-        hashes = np.round(blobs['rois'] * cfg.DEDUP_BOXES).dot(v)
-        _, index, inv_index = np.unique(hashes, return_index=True,
-                                        return_inverse=True)
-        blobs['rois'] = blobs['rois'][index, :]
-        boxes = boxes[index, :]
+    # if cfg.DEDUP_BOXES > 0 and not cfg.TEST.HAS_RPN:
+    #     v = np.array([1, 1e3, 1e6, 1e9, 1e12])
+    #     hashes = np.round(blobs['rois'] * cfg.DEDUP_BOXES).dot(v)
+    #     _, index, inv_index = np.unique(hashes, return_index=True,
+    #                                     return_inverse=True)
+    #     blobs['rois'] = blobs['rois'][index, :]
+    #     boxes = boxes[index, :]
 
-    if cfg.TEST.HAS_RPN:
-        im_blob = blobs['data']
-        blobs['im_info'] = np.array(
-            [[im_blob.shape[1], im_blob.shape[2], im_scales[0]]],
-            dtype=np.float32)
+    # if cfg.TEST.HAS_RPN:
+    im_blob = blobs['data']
+    blobs['im_info'] = np.array(
+        [[im_blob.shape[1], im_blob.shape[2], im_scales[0]]],
+        dtype=np.float32)
     # forward pass
-    if cfg.TEST.HAS_RPN:
-        feed_dict={net.data: blobs['data'], net.im_info: blobs['im_info'], net.keep_prob: 1.0}
-    else:
-        feed_dict={net.data: blobs['data'], net.rois: blobs['rois'], net.keep_prob: 1.0}
+    # if cfg.TEST.HAS_RPN:
+    feed_dict={net.data: blobs['data'], net.im_info: blobs['im_info'], net.keep_prob: 1.0}
+    # else:
+    # feed_dict={net.data: blobs['data'], net.rois: blobs['rois'], net.keep_prob: 1.0}
 
     run_options = None
     run_metadata = None
-    if cfg.TEST.DEBUG_TIMELINE:
-        run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-        run_metadata = tf.RunMetadata()
+    # if cfg.TEST.DEBUG_TIMELINE:
+    #     run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+    #     run_metadata = tf.RunMetadata()
 
     cls_score, cls_prob, bbox_pred, rois = sess.run([net.get_output('cls_score'), net.get_output('cls_prob'), net.get_output('bbox_pred'),net.get_output('rois')],
                                                     feed_dict=feed_dict,
                                                     options=run_options,
                                                     run_metadata=run_metadata)
 
-    if cfg.TEST.HAS_RPN:
-        assert len(im_scales) == 1, "Only single-image batch implemented"
-        boxes = rois[:, 1:5] / im_scales[0]
+    # if cfg.TEST.HAS_RPN:
+    assert len(im_scales) == 1, "Only single-image batch implemented"
+    boxes = rois[:, 1:5] / im_scales[0]
 
 
-    if cfg.TEST.SVM:
-        # use the raw scores before softmax under the assumption they
-        # were trained as linear SVMs
-        scores = cls_score
-    else:
+    # if cfg.TEST.SVM:
+    #     # use the raw scores before softmax under the assumption they
+    #     # were trained as linear SVMs
+    #     scores = cls_score
+    # else:
         # use softmax estimated probabilities
-        scores = cls_prob
+    scores = cls_prob
 
-    if cfg.TEST.BBOX_REG:
+    # if cfg.TEST.BBOX_REG:
         # Apply bounding-box regression deltas
-        box_deltas = bbox_pred
-        pred_boxes = bbox_transform_inv(boxes, box_deltas)
-        pred_boxes = _clip_boxes(pred_boxes, im.shape)
-    else:
+    box_deltas = bbox_pred
+    pred_boxes = bbox_transform_inv(boxes, box_deltas)
+    pred_boxes = _clip_boxes(pred_boxes, im.shape)
+    # else:
         # Simply repeat the boxes, once for each class
-        pred_boxes = np.tile(boxes, (1, scores.shape[1]))
+        # pred_boxes = np.tile(boxes, (1, scores.shape[1]))
 
-    if cfg.DEDUP_BOXES > 0 and not cfg.TEST.HAS_RPN:
-        # Map scores and predictions back to the original set of boxes
-        scores = scores[inv_index, :]
-        pred_boxes = pred_boxes[inv_index, :]
-
-    if cfg.TEST.DEBUG_TIMELINE:
-        trace = timeline.Timeline(step_stats=run_metadata.step_stats)
-        trace_file = open(str(long(time.time() * 1000)) + '-test-timeline.ctf.json', 'w')
-        trace_file.write(trace.generate_chrome_trace_format(show_memory=False))
-        trace_file.close()
+    # if cfg.DEDUP_BOXES > 0 and not cfg.TEST.HAS_RPN:
+    #     # Map scores and predictions back to the original set of boxes
+    #     scores = scores[inv_index, :]
+    #     pred_boxes = pred_boxes[inv_index, :]
+    #
+    # if cfg.TEST.DEBUG_TIMELINE:
+    #     trace = timeline.Timeline(step_stats=run_metadata.step_stats)
+    #     trace_file = open(str(long(time.time() * 1000)) + '-test-timeline.ctf.json', 'w')
+    #     trace_file.write(trace.generate_chrome_trace_format(show_memory=False))
+    #     trace_file.close()
 
     return scores, pred_boxes
 

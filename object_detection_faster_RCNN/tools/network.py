@@ -28,7 +28,7 @@ def layer(op):
 
 class Network(object):
     def feed(self, *args):
-        print("feed")
+        # print("feed")
         assert len(args) != 0
         self.inputs = []
         for layer in args:
@@ -52,7 +52,7 @@ class Network(object):
 
     @layer
     def max_pool(self, input, k_h, k_w, s_h, s_w, name, padding=DEFAULT_PADDING):
-        print("max_pool")
+        # print("max_pool")
         self.validate_padding(padding)
         return tf.nn.max_pool(
             input,
@@ -88,7 +88,7 @@ class Network(object):
             group=1,
             trainable=True
     ):
-        print("conv")
+        # print("conv")
         self.validate_padding(padding)
         c_i = input.get_shape()[-1]
         assert c_i%group == 0
@@ -114,7 +114,7 @@ class Network(object):
 
     @layer
     def roi_pool(self, input, pooled_height, pooled_width, spatial_scale, name):
-        print("roi_pool")
+        # print("roi_pool")
 
         if isinstance(input[0], tuple):
             input[0] = input[0][0]
@@ -134,7 +134,7 @@ class Network(object):
 
     @layer
     def proposal_layer(self, input, _feat_stride, anchor_scales, cfg_key, name):
-        print("proposal_layer")
+        # print("proposal_layer")
         if isinstance(input[0], tuple):
             input[0] = input[0][0]
 
@@ -175,7 +175,7 @@ class Network(object):
 
     @layer
     def fc(self, input, num_out, name, relu=True, trainable=True):
-        print("fc with name %s" % name)
+        # print("fc with name %s" % name)
         with tf.variable_scope(name) as scope:
 
             if isinstance(input, tuple):
@@ -206,7 +206,7 @@ class Network(object):
 
     @layer
     def softmax(self, input, name):
-        print("softmax")
+        # print("softmax")
         input_shape = tf.shape(input)
         if name == 'rpn_cls_prob':
             return tf.reshape(tf.nn.softmax(tf.reshape(input, [-1, input_shape[3]])), [-1, input_shape[1], input_shape[2], input_shape[3]], name=name)

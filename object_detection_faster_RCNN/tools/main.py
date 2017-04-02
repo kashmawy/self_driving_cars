@@ -8,6 +8,8 @@ from model import VGGNet
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
+from demo import demo
+from fast_rcnn.test import _get_blobs
 
 PIXEL_MEAN = np.array([[[102.9801, 115.9465, 122.7717]]])
 SCALES = (600,)
@@ -78,16 +80,16 @@ def get_input(image):
 
 
 def detect(session, network, image):
-    blobs_data, image_scales = get_input(image)
-    image_blob = blobs_data['data']
-    blobs_data['im_info'] = np.array(
+    blobs, image_scales = get_input(image)
+    image_blob = blobs['data']
+    blobs['im_info'] = np.array(
         [[image_blob.shape[1], image_blob.shape[2], image_scales[0]]],
         dtype=np.float32
     )
 
     feed_dict = {
-        network.data: blobs_data['data'],
-        network.im_info: blobs_data['im_info'],
+        network.data: blobs['data'],
+        network.im_info: blobs['im_info'],
         network.keep_prob: 1.0
     }
 
@@ -101,13 +103,13 @@ def detect(session, network, image):
     pred_boxes = bbox_transform_inv(boxes, bbox_pred)
     pred_boxes = clip_boxes(pred_boxes, image.shape)
 
-    return cls_score, pred_boxes
+    return cls_prob, pred_boxes
 
-def visualize(image, scores, boxes):
+def visualize(im, scores, boxes):
     # Visualize detections for each class
-    image = image[:, :, (2, 1, 0)]
+    im = im[:, :, (2, 1, 0)]
     fig, ax = plt.subplots(figsize=(12, 12))
-    ax.imshow(image, aspect='equal')
+    ax.imshow(im, aspect='equal')
 
     CONF_THRESH = 0.8
     NMS_THRESH = 0.3
@@ -124,7 +126,7 @@ def visualize(image, scores, boxes):
     plt.show()
 
 
-def vis_detections(class_name, dets, ax, thresh=0.5):
+def vis_detections(class_name, dets,ax, thresh=0.5):
     """Draw detected bounding boxes."""
     inds = np.where(dets[:, -1] >= thresh)[0]
     if len(inds) == 0:
@@ -139,7 +141,7 @@ def vis_detections(class_name, dets, ax, thresh=0.5):
                           bbox[2] - bbox[0],
                           bbox[3] - bbox[1], fill=False,
                           edgecolor='red', linewidth=3.5)
-        )
+            )
         ax.text(bbox[0], bbox[1] - 2,
                 '{:s} {:.3f}'.format(class_name, score),
                 bbox=dict(facecolor='blue', alpha=0.5),
@@ -148,7 +150,7 @@ def vis_detections(class_name, dets, ax, thresh=0.5):
     ax.set_title(('{} detections with '
                   'p({} | box) >= {:.1f}').format(class_name, class_name,
                                                   thresh),
-                 fontsize=14)
+                  fontsize=14)
     plt.axis('off')
     plt.tight_layout()
     plt.draw()
@@ -226,6 +228,9 @@ if __name__ == '__main__':
     saver = tf.train.Saver(write_version=tf.train.SaverDef.V1)
     saver.restore(session, args.model)
 
+    # demo(session, network, args.image_path)
+    # plt.show()
     image = cv2.imread(args.image_path)
     scores, boxes = detect(session, network, image)
+    print('Found {:d} object proposals').format(boxes.shape[0])
     visualize(image, scores, boxes)
