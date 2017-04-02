@@ -61,7 +61,7 @@ The following image shows a person being detected:
 ![Person](output_images/person_after.png)
 
 
-##Credits
+## Credits
 
 This project is to learn more about object detection using [Faster RCNN](https://arxiv.org/pdf/1506.01497v3.pdf).
 The work here is inspired from [here](https://github.com/smallcorgi/Faster-RCNN_TF).
