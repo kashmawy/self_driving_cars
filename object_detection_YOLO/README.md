@@ -57,6 +57,6 @@ The following image shows a person being detected:
 ![Person](output_images/person.png)
 
 
-##Credits
+## Credits
 This project is to learn more about object detection using [YOLO](https://ai2-website.s3.amazonaws.com/publications/YOLO.pdf).
 The work here is inspired from [here](https://github.com/gliese581gg/YOLO_tensorflow).
