@@ -47,7 +47,7 @@ On each ProcessMeasurement, it does the following:
 1. If this was the first value processed:
 
    Then if it is a Radar measurement then extract (range, bearing and rho velocity) and calculate x, y, vx, and vy from these values.
-   
+
    If it is a laser measurement, then extract x, y, and set vx and vy to 0 and 0.
 
    Check if x and y values are less than a small value, if so, set them to those values.
@@ -63,7 +63,9 @@ On each ProcessMeasurement, it does the following:
    P = F * P * Ftranspose + Q
 
 4. Call Update on kalman_filter component, which does the following:
+
    If the measurement is a radar measurement, then call UpdateEKF which does the following:
+   
      Set Hj to be Jacobian from X.
      Calculate range, bearing and rho velocity from X.
      Set h to be range, bearing and rho velocity.
