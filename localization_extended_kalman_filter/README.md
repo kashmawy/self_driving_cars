@@ -44,8 +44,10 @@ The FusionEKF component is responsible for setting the following values on initi
 
 On each ProcessMeasurement, it does the following:
 
-1. If this was the first value processed
+1. If this was the first value processed:
+
    Then if it is a Radar measurement then extract (range, bearing and rho velocity) and calculate x, y, vx, and vy from these values.
+   
    If it is a laser measurement, then extract x, y, and set vx and vy to 0 and 0.
 
    Check if x and y values are less than a small value, if so, set them to those values.
