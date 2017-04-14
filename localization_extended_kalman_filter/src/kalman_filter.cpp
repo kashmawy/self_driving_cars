@@ -36,13 +36,14 @@ void KalmanFilter::Predict() {
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
-  VectorXd z_pred = H_ * x_;
-  VectorXd y = z - z_pred;
-
+  VectorXd y = z - H_ * x_;
   UpdateCommon(H_, R_laser_, y);
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
+  Tools tools;
+  Hj_ = tools.CalculateJacobian(x_);
+
   double rho = sqrt(x_(0) * x_(0) + x_(1) * x_(1));
   double theta = atan(x_(1) / x_(0));
   double rho_dot = (x_(0) * x_(2) + x_(1) * x_(3)) / rho;
@@ -50,18 +51,14 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   h << rho, theta, rho_dot;
   VectorXd y = z - h;
 
-  Tools tools;
-  Hj_ = tools.CalculateJacobian(x_);
-
   UpdateCommon(Hj_, R_radar_, y);
 }
 
 void KalmanFilter::UpdateCommon(const MatrixXd &H, const MatrixXd &R, const VectorXd &y) {
   MatrixXd Ht = H.transpose();
   MatrixXd S = H * P_ * Ht + R;
-  MatrixXd Si = S.inverse();
   MatrixXd PHt = P_ * Ht;
-  MatrixXd K = PHt * Si;
+  MatrixXd K = PHt * S.inverse();
 
   x_ = x_ + (K * y);
   long x_size = x_.size();
