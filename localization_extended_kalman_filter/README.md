@@ -60,10 +60,10 @@ On each ProcessMeasurement, it does the following:
 
    Set F to the following:
 
-       [ 1 0 dt 0  ]
-   F = [ 0 1 0  dt ]
-       [ 0 0 1  0  ]
-       [ 0 0 0  1  ]
+       [ 1 0 dt 0 ]
+   F = [ 0 1 0 dt ]
+       [ 0 0 1 0  ]
+       [ 0 0 0 1  ]
 
    Set Q to the following:
 
