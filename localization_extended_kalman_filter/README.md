@@ -65,7 +65,7 @@ On each ProcessMeasurement, it does the following:
 4. Call Update on kalman_filter component, which does the following:
 
    If the measurement is a radar measurement, then call UpdateEKF which does the following:
-   
+
      Set Hj to be Jacobian from X.
      Calculate range, bearing and rho velocity from X.
      Set h to be range, bearing and rho velocity.
@@ -74,11 +74,15 @@ On each ProcessMeasurement, it does the following:
      Call UpdateCommon with Hj, R_radar and y, which does the following:
 
      Ht = H.tranpose()
+
      S = H * P * Ht + R
+     
      K = P * Ht * S.inverse()
 
      X = X + (K * y)
+
      I = Identify matrix of same size as X
+
      P = (I - K * H) * P
 
    If the measurement is a laser measurement, then call Update which does the following:
