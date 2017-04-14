@@ -117,12 +117,17 @@ At the end we calculate the root mean squared error and compare it with the actu
 
 ## Results
 
-For the first shape, the root mean squared for px, py, vx, vy was: [0.0651648, 0.0605379, 0.533212, 0.544193]
-You can see the details in the following figure.
-The yellow dots represent the measurement. The green line represent the ground truth while the blue line represent where the extended kalman filter thinks the object is.
-The y axis is the position along the y axis, and the x axis is the position along the x-axis.
+For the first shape, the root mean squared for px, py, vx, vy was: [0.0651648, 0.0605379, 0.533212, 0.544193].
+You can see the details in the following figure:
+
 
 ![8 Shape](visualizations/ekf_8_shape.png)
+
+The yellow dots represent the measurement.
+
+The green line represent the ground truth while the blue line represent where the extended kalman filter thinks the object is.
+
+The y axis is the position along the y axis, and the x axis is the position along the x-axis.
 
 For the second shape, the root mean squared for px, py, vx, vy was: [0.187718, 0.192202, 0.474744, 0.830695]
 You can see the details in the following figure:
