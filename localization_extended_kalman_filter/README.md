@@ -131,4 +131,4 @@ You can see the details in the following figure:
 
 ## Credit
 
-Some of the work here was inspired by https://github.com/NikolasEnt/Extended-Kalman-Filter
+Some of the work here was inspired by [here](https://github.com/NikolasEnt/Extended-Kalman-Filter)
