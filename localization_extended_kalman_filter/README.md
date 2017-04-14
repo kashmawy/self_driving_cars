@@ -58,14 +58,14 @@ On each ProcessMeasurement, it does the following:
 
    Calculate the time delta between the current measurement and the previous measurement in microseconds.
 
-   Set F to the following
+   Set F to the following:
 
        [ 1 0 dt 0  ]
    F = [ 0 1 0  dt ]
        [ 0 0 1  0  ]
        [ 0 0 0  1  ]
 
-   Set Q to the following
+   Set Q to the following:
 
         [ dt^4/4*noise_ax, 0, dt^3/2*noise_ax, 0 ]
    Q =  [ 0, dt^4/4*noise_ay, 0, dt^3/2*noise_ay ]
