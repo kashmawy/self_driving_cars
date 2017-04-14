@@ -37,8 +37,8 @@ The FusionEKF component is responsible for setting the following values on initi
 
 1. R for laser is the measurement covariance matrix for Laser.
 2. R for radar is the measurement covariance matrix for Radar.
-3. H for laser is the measurement matrix, which projects your belief about the object's current state into the measurement space of the sensor.
-4. P is the state covariance matrix, which contains information about the uncertainity of the object's position and velocity. (like standard deviation)
+3. H for laser is the measurement matrix, which projects our belief about the object's current state into the measurement space of the sensor.
+4. P is the state covariance matrix, which contains information about the uncertainity of the object's position and velocity, like standard deviation.
 5. F is a matrix that when multiplied with X predicts where the object will be after delta t.
 6. Q is the process covariance matrix.
 
@@ -58,23 +58,33 @@ On each ProcessMeasurement, it does the following:
 
    Calculate the time delta between the current measurement and the previous measurement in microseconds.
 
-   Set F to X
+   Set F to the following
 
-   Set Q to Y
+       [ 1 0 dt 0  ]
+   F = [ 0 1 0  dt ]
+       [ 0 0 1  0  ]
+       [ 0 0 0  1  ]
+
+   Set Q to the following
+
+        [ dt^4/4*noise_ax, 0, dt^3/2*noise_ax, 0 ]
+   Q =  [ 0, dt^4/4*noise_ay, 0, dt^3/2*noise_ay ]
+        [ dt^3/2*noise_ax, 0, dt^2*noise_ax, 0 ]
+        [ 0, dt^3/2*noise_ay, 0, dt^2*noise_ay ]
 
 3. Call Predict on kalman_filter component, which does the following calculation.
 
-   X = F * X
+   X = F * X [Calculate where is the next X]
 
-   P = F * P * Ftranspose + Q
+   P = F * P * Ftranspose + Q [Calculate the next P]
 
 4. Call Update on kalman_filter component, which does the following:
 
    If the measurement is a radar measurement, then call UpdateEKF which does the following:
 
-     Set Hj to be Jacobian from X.
+     Set Hj to be Jacobian from X. [A linear H for radar]
 
-     Calculate range, bearing and rho velocity from X.
+     Calculate range [radial distance from origin], bearing [angle between p which is where the object is moving toward and x] and rho velocity [range rate] from X.
 
      Set h to be range, bearing and rho velocity.
 
@@ -84,20 +94,20 @@ On each ProcessMeasurement, it does the following:
 
      Ht = H.tranpose()
 
-     S = H * P * Ht + R
+     S = H * P * Ht + R []
 
-     K = P * Ht * S.inverse()
+     K = P * Ht * S.inverse() [Kalman filter gain, combines the uncertainty of where we think we are P with the uncertainty of our sensor measurement R]
 
-     X = X + (K * y)
+     X = X + (K * y) (Calculate the next X)
 
      I = Identify matrix of same size as X
 
-     P = (I - K * H) * P
+     P = (I - K * H) * P (Calculate the next P)
 
    If the measurement is a laser measurement, then call Update which does the following:
 
      Set y to be z - H * x
-     
+
      Call UpdateCommon with H, R_laser and y which was explained above.
 
 The process described above describes the process we go with each measurement (laser or radar).
