@@ -68,7 +68,7 @@ On each ProcessMeasurement, it does the following:
    Set Q to the following:
 
         [ dt^4/4*noise_ax, 0, dt^3/2*noise_ax, 0 ]
-   Q =  [ 0, dt^4/4*noise_ay, 0, dt^3/2*noise_ay ]
+        [ 0, dt^4/4*noise_ay, 0, dt^3/2*noise_ay ]
         [ dt^3/2*noise_ax, 0, dt^2*noise_ax, 0 ]
         [ 0, dt^3/2*noise_ay, 0, dt^2*noise_ay ]
 
