@@ -122,12 +122,12 @@ You can see the details in the following figure.
 The yellow dots represent the measurement. The green line represent the ground truth while the blue line represent where the extended kalman filter thinks the object is.
 The y axis is the position along the y axis, and the x axis is the position along the x-axis.
 
-![8 Shape](visualization/ekf_8_shape.png)
+![8 Shape](visualizations/ekf_8_shape.png)
 
 For the second shape, the root mean squared for px, py, vx, vy was: [0.187718, 0.192202, 0.474744, 0.830695]
 You can see the details in the following figure:
 
-![N shape](visualization/ekf_n_shape.png)
+![N shape](visualizations/ekf_n_shape.png)
 
 ## Credit
 
