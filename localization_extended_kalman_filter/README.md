@@ -51,15 +51,21 @@ On each ProcessMeasurement, it does the following:
    If it is a laser measurement, then extract x, y, and set vx and vy to 0 and 0.
 
    Check if x and y values are less than a small value, if so, set them to those values.
+
    Set a record to indicate that the first measurement was record and record its timestamp.
 
 2. If this was not the first value processed
+
    Calculate the time delta between the current measurement and the previous measurement in microseconds.
+
    Set F to X
+
    Set Q to Y
 
 3. Call Predict on kalman_filter component, which does the following calculation.
+
    X = F * X
+
    P = F * P * Ftranspose + Q
 
 4. Call Update on kalman_filter component, which does the following:
@@ -67,8 +73,11 @@ On each ProcessMeasurement, it does the following:
    If the measurement is a radar measurement, then call UpdateEKF which does the following:
 
      Set Hj to be Jacobian from X.
+
      Calculate range, bearing and rho velocity from X.
+
      Set h to be range, bearing and rho velocity.
+
      Set y to be z (current measurement) - h.
 
      Call UpdateCommon with Hj, R_radar and y, which does the following:
@@ -76,7 +85,7 @@ On each ProcessMeasurement, it does the following:
      Ht = H.tranpose()
 
      S = H * P * Ht + R
-     
+
      K = P * Ht * S.inverse()
 
      X = X + (K * y)
@@ -86,7 +95,9 @@ On each ProcessMeasurement, it does the following:
      P = (I - K * H) * P
 
    If the measurement is a laser measurement, then call Update which does the following:
+
      Set y to be z - H * x
+     
      Call UpdateCommon with H, R_laser and y which was explained above.
 
 The process described above describes the process we go with each measurement (laser or radar).
