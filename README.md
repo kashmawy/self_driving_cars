@@ -10,6 +10,7 @@ Projects for Self Driving Cars:
 6. [Object detection using YOLO](object_detection_YOLO/): Object detection using You Only Look Once (YOLO).
 7. [Object detection using faster RCNN](object_detection_faster_RCNN/): Object detection using faster RCNN.
 8. [Object localization using extended kalman filter](localization_extended_kalman_filter/): Object localization using data from laser and radar using extended kalman filter.
+9. [Object localization using unscented kalman filter](localization_unscented_kalman_filter/): Object localization using data from laser and radar using unscented kalman filter to allow for more complex motion like turning.
 
 Other Misc Projects in the same area:
 
