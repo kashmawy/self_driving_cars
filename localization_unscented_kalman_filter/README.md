@@ -1,7 +1,5 @@
-# Unscented Kalman Filter Project Starter Code
-Self-Driving Car Engineer Nanodegree Program
-
----
+Localization project using Laser and Radar data by unscented kalman filter
+==========================================================================
 
 ## Dependencies
 
@@ -9,7 +7,7 @@ Self-Driving Car Engineer Nanodegree Program
 * make >= v4.1
 * gcc/g++ >= v5.4
 
-## Basic Build Instructions
+## How to build and run
 
 1. Clone this repo.
 2. Make a build directory: `mkdir build && cd build`
@@ -18,29 +16,59 @@ Self-Driving Car Engineer Nanodegree Program
    some sample inputs in 'data/'.
     - eg. `./UnscentedKF ../data/obj_pose-laser-radar-synthetic-input.txt`
 
-## Editor Settings
+## Code Structure and Explanation
 
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
+The code is structured into a main component and a ukf component.
+The main component reads the measurement from an input file and calls ProcessMeasurement with that line on ukf.
 
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
+The ukf component initializes the following variables:
 
-## Code Style
+1. X the state vector. [5x1 vector]
+2. P the covriance matrix. [5x5 matrix]
+3. std_a, the standard deviation longitudinal acceleration.
+4. std_yawdd, the noise standard deviation yaw acceleration.
+5. std_laser, the laser measurement noise standard deviation position.
+6. std_radar, the radar measurement noise standard deviation radius.
+7. std_radphi, the radar measurement noise standard deviation angle.
+8. std_radrd, the radar measurement noise standard deviation radius change.
+9. n_x, the state dimension.
+10. n_aug, the augemented state dimension.
+11. n_z_radar, Radar Z dimension
+12. n_z_laser, Laser Z dimension
+13. lambda, 3 - n_x
 
-Please stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html) as much as possible.
+The ukf component does the following each time ProcessMeasurement is called:
 
-## Generating Additional Data
+1. If this is the first measurement, then:
 
-This is optional!
+  If it is a radar measurement, then extract rho (first value) and phi (second value) and compute px (rho * cos(phi)) and py (rho * sin(phi)) and set X to px and py.
 
-If you'd like to generate your own radar and lidar data, see the
-[utilities repo](https://github.com/udacity/CarND-Mercedes-SF-Utilities) for
-Matlab scripts that can generate additional data.
+  If it is a laser measurement, set X to first value (which is px) and second value (which is py).
 
-## Project Instructions and Rubric
+  Record the timestamp in previous_timestamp and mark it such that we know that we have processed a measurement already.
 
-This information is only accessible by people who are already enrolled in Term 2
-of CarND. If you are enrolled, see [the project page](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/0949fca6-b379-42af-a919-ee50aa304e6a/lessons/c3eb3583-17b2-4d83-abf7-d852ae1b9fff/concepts/f437b8b0-f2d8-43b0-9662-72ac4e4029c1)
-for instructions and the project rubric.
+2. For all subsequent measurement, if it is a radar then call Predict passing dt (microseconds difference between measurement timestamp and current timestamp) and then call UpdateRadar.
+3. If it is a laser measurement, then call Predict passing dt and then call UdateLaser.
+
+Predict does the following given dt:
+
+1. Calculate Sigma point augmented
+2. Predict Sigma Point
+3. Predict State Mean
+4. Predict State Covariance Matrix
+
+UpdateRadar does the following given the current measurement and the sigma point prediction:
+
+1. Create Zsig matrix from the sigma point prediction
+2. Calculate the mean predicted measurement
+3. Calculate S from Zsig and weights
+4. Calculate R from the standard deviation of the measurement
+5. Calculate Tc from weights, z_diff and x_diff
+6. Calculate K from Tc and S
+7. Calculate X and P from the previous
+
+UpdateLaser is very simmiliar.
+
+## Credit
+
+Some of the work here was inspired by [here](https://github.com/Valtgun/CarND-Unscented-Kalman-Filter-Project)
