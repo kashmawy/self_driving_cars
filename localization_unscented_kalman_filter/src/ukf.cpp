@@ -333,4 +333,73 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   You'll also need to calculate the radar NIS.
   */
+
+  if (x_(0) == 0) return;
+  MatrixXd Zsig = MatrixXd(n_z_radar_, 2 * n_aug_ + 1);
+
+  for (int i = 0; i < 2 * n_aug_ + 1; ++i) {
+    double p_x = Xsig_pred_(0, i);
+    double p_y = Xsig_pred_(1, i);
+    double v = Xsig_pred_(2, i);
+    double yaw = Xsig_pred_(3, i);
+    double v1 = cos(yaw) * v;
+    double v2 = sin(yaw) * v;
+
+    Zsig(0, i) = sqrt(p_x * p_x + p_y * p_y);
+    Zsig(1, i) = atan2(p_y, p_x);
+    Zsig(2, i) = (p_x*v1 + p_y * v2) / sqrt(p_x*p_x + p_y*p_y);
+  }
+
+  // Mean predicted measurement
+  VectorXd z_pred = VectorXd(n_z_radar_);
+  z_pred.fill(0.0);
+  for (int i = 0; i < 2 * n_aug_ + 1; ++i) {
+    z_pred = z_pred + weights_(i) * Zsig.col(i);
+  }
+
+  MatrixXd S = MatrixXd(n_z_radar_, n_z_radar_);
+  S.fill(0.0);
+  for (int i = 0; i < 2 * n_aug_ + 1; ++i) {
+    VectorXd z_diff = Zsig.col(i) - z_pred;
+
+    while (z_diff(1) > M_PI) z_diff(1) -= 2.0 * M_PI;
+    while (z_diff(1) < M_PI) z_diff(1) += 2.0 * M_PI;
+
+    S = S + weights_(i) * z_diff * z_diff.transpose();
+  }
+
+  MatrixXd R = MatrixXd(n_z_radar_, n_z_radar_);
+  R << std_radr_ * std_radr_, 0, 0,
+       0, std_radphi_ * std_radphi_, 0,
+       0, 0, std_radrd_ * std_radr_;
+  S = S + R;
+
+  MatrixXd Tc = MatrixXd(n_x_, n_z_radar_);
+  Tc.fill(0.0);
+  for (int i = 0; i < 2 * n_aug_ + 1; ++i) {
+    VectorXd z_diff = Zsig.col(i) - z_pred;
+
+    while (z_diff(1) > M_PI) z_diff(1) -= 2.0 * M_PI;
+    while (z_diff(1) < M_PI) z_diff(1) += 2.0 * M_PI;
+
+    VectorXd x_diff = Xsig_pred_.col(i) - x_;
+
+    while (x_diff(3) > M_PI) x_diff(3) -= 2.0 * M_PI;
+    while (x_diff(3) < M_PI) x_diff(3) += 2.0 * M_PI;
+
+    Tc = Tc + weights_(i) * x_diff * z_diff.transpose();
+  }
+
+  MatrixXd K = Tc * S.inverse();
+  VectorXd z = VectorXd(n_z_radar_);
+  z << meas_package.raw_measurements_(0), meas_package.raw_measurements_(1), meas_package.raw_measurements_(2);
+  VectorXd z_diff = z - z_pred;
+
+  while (z_diff(1) > M_PI) z_diff(1) -= 2.0 * M_PI;
+  while (z_diff(1) < M_PI) z_diff(1) += 2.0 * M_PI;
+
+  x_ = x_ + K * z_diff;
+  P_ = P_ - K * S * K.transpose();
+
+  NIS_radar_ = z_diff.transpose() * S.inverse() * z_diff;
 }
