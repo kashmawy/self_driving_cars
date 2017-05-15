@@ -13,6 +13,7 @@ Projects for Self Driving Cars:
 9. [Object localization using unscented kalman filter](localization_unscented_kalman_filter/): Object localization using data from laser and radar using unscented kalman filter to allow for more complex motion like turning.
 10. [Lidar topview with 3D Bounding Boxes from Kitti dataset](kitti_lidar_topview_3D_BB/): Lidar topview with 3D Bounding Boxes.
 11. [Object localization using particle filter](localization_particle_filter/): Object localization using particle filter.
+12. [PID Controller]: PID Controller for the vehicle.
 
 Other Misc Projects in the same area:
 
