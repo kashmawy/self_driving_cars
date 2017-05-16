@@ -49,14 +49,17 @@ The following are the results of using the controller with track1:
 2. PD Controller (No I)
 
 The I component mainly tries to compoensate for drift error which is negligible in this case.
+
 [![A controller without I also completes the track successfully, which means that the drift error is negligible.](https://img.youtube.com/vi/YW43OYxFKzc/0.jpg)](https://youtu.be/YW43OYxFKzc)
 
 3. ID Controller (No P)
 
 The P component mainly tries to reduce the CTE error, since it is ignored in this case, the vehicle fails to correct its position to minimize CTE and be where it should be and the track run fails.
+
 [![A controller without P does not complete the track successfully](https://img.youtube.com/vi/k8yrqYgbTqo/0.jpg)](https://youtu.be/k8yrqYgbTqo)
 
 4. PI Controller (No D)
 
 The D component mainly tries to reduce the diff in CTE in order to be able to reach the desired location without overshooting in both directions as it minimizes the CTE. This is why this track run fails.
+
 [![A controller without the D does not complete the track successfully](https://img.youtube.com/vi/DdLDQ8rNstQ/0.jpg)](https://youtu.be/DdLDQ8rNstQ)
