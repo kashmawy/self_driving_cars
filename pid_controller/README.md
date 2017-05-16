@@ -1,5 +1,4 @@
-# CarND-Controls-PID
-Self-Driving Car Engineer Nanodegree Program
+# PID Controller
 
 ---
 
@@ -25,67 +24,25 @@ Self-Driving Car Engineer Nanodegree Program
 1. Clone this repo.
 2. Make a build directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
-4. Run it: `./pid`. 
+4. Run it: `./pid`.
 
-## Editor Settings
+## PID Controller
 
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
+This project creates a PID controller. The following are the elements of the PID controller:
 
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
+1. Proportional to Cross Track Error (CTE): proportional to - alpha1 * CTE in reference to where we want to be. The P component makes sure that we approach the Y value of where we want to be.
+2. Integral to Cross Track Error (CTE): proportional to - alpha2 * [summation of all CTE at all time frames in reference to where we want to be]. The I component is used to guard against the drift error.
+3. Diffrential to Cross Track Error (CTE): proportional to - alpha3 * [diffrence in CTE in reference to where we want to be]. The D component ensures that we have less oscilliations when reaching the Y value of where we want to be.
 
-## Code Style
+# PID values
 
-Please (do your best to) stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
+The alpha1, alpha2 and alpha3 values for PID were chosen by manually testing them with the simulated track and seeing the effect and changing them accordingly.
 
-## Project Instructions and Rubric
+# Results
 
-Note: regardless of the changes you make, your project must be buildable using
-cmake and make!
+The following are the results of using the controller with track1:
 
-More information is only accessible by people who are already enrolled in Term 2
-of CarND. If you are enrolled, see [the project page](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/e8235395-22dd-4b87-88e0-d108c5e5bbf4/concepts/6a4d8d42-6a04-4aa6-b284-1697c0fd6562)
-for instructions and the project rubric.
-
-## Hints!
-
-* You don't have to follow this directory structure, but if you do, your work
-  will span all of the .cpp files here. Keep an eye out for TODOs.
-
-## Call for IDE Profiles Pull Requests
-
-Help your fellow students!
-
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to we ensure
-that students don't feel pressured to use one IDE or another.
-
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
-
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
-
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
-
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
-
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
-
-# Tracks
-
-success ->  https://youtu.be/MEUKQZj7C2M
-pi track -> https://youtu.be/DdLDQ8rNstQ
-pd track -> https://youtu.be/_6gQpvajN1w
-id track -> https://youtu.be/pWlchUnVM9g
+1. [![The PID controller completes the track successfully](https://img.youtube.com/vi/7OSPnfSJog8/0.jpg)](https://youtu.be/7OSPnfSJog8)
+2. [![A controller without I also completes the track successfully, which means that the drift error is negligible.](https://img.youtube.com/vi/YW43OYxFKzc/0.jpg)](https://youtu.be/YW43OYxFKzc): The I components mainly tries to compoensate for drift error which is negligible in this case.
+3. [![A controller without P does not complete the track successfully](https://img.youtube.com/vi/k8yrqYgbTqo/0.jpg)](https://youtu.be/k8yrqYgbTqo): The p componenet mainly tries to reduce the CTE error, since it is ignored in this case, the vehicle fails to correct its position to minimize CTE and be where it should be and the track run fails.
+4. [![A controller without the D does not complete the track successfully](https://img.youtube.com/vi/KzEOlea0wNA/0.jpg)](https://youtu.be/KzEOlea0wNA): The d component mainly tries to reduce the diff in CTE in order to be able to reach the desired location without overshooting in both directions as it minimizes the CTE. This is why this track run fails.
