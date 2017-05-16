@@ -59,4 +59,4 @@ The P component mainly tries to reduce the CTE error, since it is ignored in thi
 4. PI Controller (No D)
 
 The D component mainly tries to reduce the diff in CTE in order to be able to reach the desired location without overshooting in both directions as it minimizes the CTE. This is why this track run fails.
-[![A controller without the D does not complete the track successfully](https://img.youtube.com/vi/KzEOlea0wNA/0.jpg)](https://youtu.be/KzEOlea0wNA)
+[![A controller without the D does not complete the track successfully](https://img.youtube.com/vi/DdLDQ8rNstQ/0.jpg)](https://youtu.be/DdLDQ8rNstQ)
