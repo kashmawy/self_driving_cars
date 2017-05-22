@@ -1,6 +1,7 @@
-# CarND-Controls-MPC
+# Model Predictive Controller Project
 
 ---
+
 
 ## Dependencies
 
@@ -31,7 +32,6 @@
 * Simulator. You can download these from the [releases tab](https://github.com/udacity/CarND-MPC-Project/releases).
 
 
-
 ## Basic Build Instructions
 
 
@@ -40,66 +40,68 @@
 3. Compile: `cmake .. && make`
 4. Run it: `./mpc`.
 
-## Tips
 
-1. It's recommended to test the MPC on basic examples to see if your implementation behaves as desired. One possible example
-is the vehicle starting offset of a straight line (reference). If the MPC implementation is correct, after some number of timesteps
-(not too many) it should find and track the reference line.
-2. The `lake_track_waypoints.csv` file has the waypoints of the lake track. You could use this to fit polynomials and points and see of how well your model tracks curve. NOTE: This file might be not completely in sync with the simulator so your solution should NOT depend on it.
-3. For visualization this C++ [matplotlib wrapper](https://github.com/lava/matplotlib-cpp) could be helpful.
+## Code Structure
 
-## Editor Settings
+Main does the following:
 
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
+1. As the simulator is running, it gets a 'telemetry' event which has the following information:
 
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
+  a. (ptsx, ptsy) which are the map coordinates
+  b. (px, py) which are the vehicle coordinates
+  c. psi which is the angle
+  d. psi_unity
+  e. v which is the speed
 
-## Code Style
+2. Create ptsxv and ptsyv which are the map coordinates
+3. Convert them into vehicle space coordinates by doing the following calculation:
 
-Please (do your best to) stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
+  a. x = ptsxv - px
+  b. y = ptsyv - py
+  c. new_x_coordinate = x * cos(psi) + y * sin(psi)
+  d. new_y_coordinate = -x * sin(psi) + y * cos(psi)
 
-## Project Instructions and Rubric
+4. Fit ptsxv and ptsyv into 3rd degree polynomial and get the coefficients.
+5. Get cross track error by evaluating the polynomial with the coefficients from the previous step and at x = 0 and multiply it be -1.
+6. Calculate psi error (epsi) by evaluating atan(coefficients[1]) and multiplying it by -1.
+7. Create the current state from (px, py, psi, v, cte, epsi)
+8. Solve given the current state and the constraints (handled by the MPC module)
+9. Get the steer value and the throttle value
+10. Display the MPC predicted trajectory and the reference points
 
-Note: regardless of the changes you make, your project must be buildable using
-cmake and make!
+MPC module does the following:
 
-More information is only accessible by people who are already enrolled in Term 2
-of CarND. If you are enrolled, see [the project page](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/b1ff3be0-c904-438e-aad3-2b5379f0e0c3/concepts/1a2255a0-e23c-44cf-8d41-39b8a3c8264a)
-for instructions and the project rubric.
+1. Get the current state from the input (x, y, psi, v, cte, epsi)
+2. Define the number of constraints to be 6
+3. Set the upper bound and lower bound for:
 
-## Hints!
+    a. all variables (big negative number, big positive number)
+    b. delta to be [-25 degrees to 25 degrees]
+    c. accelerator to be [-1 to 1]
 
-* You don't have to follow this directory structure, but if you do, your work
-  will span all of the .cpp files here. Keep an eye out for TODOs.
+4. Compute the solution from the constraints using the following:
 
-## Call for IDE Profiles Pull Requests
+    a. Define the cost to accumulate the following:
 
-Help your fellow students!
+        1. power(velocity difference to reference velocity of 50, 2) => Will keep velocity close to 0
+        2. power(cte difference to reference cte of 0, 2) => Will keep CTE close to 0
+        3. 2 * power(epsi difference to reference epsi of 0, 2) => Will keep EPSI close to 0
+        4. power(delta, 2)
+        5. power(acceleration, 2)
+        6. 200 * power(delta difference, 2) => Will make changes in delta happen more slowly and smoothly
+        7. 10 * power(acceleration difference, 2) => Will make changes in acceleration happen more slowly and smoothly
 
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to we ensure
-that students don't feel pressured to use one IDE or another.
+    b. Copy over the state for the next N times
+    c. Create all the constraints of the following:
 
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
+        1.
 
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
 
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
+5. Get the delta and acceleration from the solution
 
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
+## Simulation
 
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
+The following shows simulation using this Model Predictive Controller.
+The green line represents the predicted path while the yellow line represents the ground truth.
+
+[![Simulation using MPC](https://img.youtube.com/vi/NxKmWrKG7eY/0.jpg)](https://youtu.be/NxKmWrKG7eY)
