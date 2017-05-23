@@ -94,7 +94,15 @@ MPC module does the following:
     b. Copy over the state for the next N times
     c. Create all the constraints of the following:
 
-        1.
+        1. X constraint: x1 - (x0 + v0 * cos(psi0) * dt)
+        2. Y constraint: y1 - (y0 + v0 * sin(psi0) * dt)
+        3. PSI Constraint: psi1 - (psi0 + v0 * delta0 / Lf * dt)
+        4. V Constraint: v1 - (v0 + a0 * dt)
+        5. CTE Constraint: cte1 - ((f0 - y0) + (v0 * sin(epsi0) * dt))
+        6. EPSI Constraint: epsi1 - ((psi0 - psides0) + v0 * delta0 / Lf * dt)
+
+        where f0 = coeffs[0] + (coeffs[1] * x0) + (coeffs[2] * pow(x0,2)) + (coeffs[3] * pow(x0,3))
+        and psides0 = atan(coeffs[1] + (2 * coeffs[2] * x0) + (3 * coeffs[3]* pow(x0,2) ))
 
 
 5. Get the delta and acceleration from the solution
@@ -105,3 +113,7 @@ The following shows simulation using this Model Predictive Controller.
 The green line represents the predicted path while the yellow line represents the ground truth.
 
 [![Simulation using MPC](https://img.youtube.com/vi/NxKmWrKG7eY/0.jpg)](https://youtu.be/NxKmWrKG7eY)
+
+## Credit
+
+Tips have been followed from https://github.com/hortovanyi/CarND-MPC-Project
