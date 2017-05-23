@@ -43,7 +43,9 @@
 ## Model
 
 Global kinematic model was used in this model predictive controller.
+
 The state consists of X position, Y position, psi angle, v speed, Cross track error (distance between vehicle and it's trajectory) and Error in PSI (difference between the vehicle angle and the trajectory angle).
+
 The actuators for the model are delta (for steering angle) and acceleration, which is the output of the model after solving it given the model constraints which are described below.
 
 The number of time steps in the future are determined by N (value of 15) and T (1) where dt is 1 in this case.
