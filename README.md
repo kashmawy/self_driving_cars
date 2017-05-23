@@ -14,6 +14,7 @@ Projects for Self Driving Cars:
 10. [Lidar topview with 3D Bounding Boxes from Kitti dataset](kitti_lidar_topview_3D_BB/): Lidar topview with 3D Bounding Boxes.
 11. [Object localization using particle filter](localization_particle_filter/): Object localization using particle filter.
 12. [PID Controller](pid_controller/): PID Controller for the vehicle.
+13. [Model Predictive Controller](model_predictive_controller/): Model Predictive Controller for the vehicle with simulation that shows the predicted path and the ground truth.
 
 Other Misc Projects in the same area:
 
