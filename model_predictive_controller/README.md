@@ -40,6 +40,20 @@
 3. Compile: `cmake .. && make`
 4. Run it: `./mpc`.
 
+## Model
+
+Global kinematic model was used in this model predictive controller.
+The state consists of X position, Y position, psi angle, v speed, Cross track error (distance between vehicle and it's trajectory) and Error in PSI (difference between the vehicle angle and the trajectory angle).
+The actuators for the model are delta (for steering angle) and acceleration, which is the output of the model after solving it given the model constraints which are described below.
+
+The number of time steps in the future are determined by N (value of 15) and T (1) where dt is 1 in this case.
+The values of N and T were picked by trial and error, with the following guidelines:
+ - If the model is trying to predict too long time in the future, it takes a while to compute and all of them are being then thrown away
+ - If the model is trying to predict too short in the future, then it doesn't have any basis of what will happen after the next step which leads to bad prediction and the car usually ends up driving off track
+
+A value in the middle is the best to avoid too much computation and being short sighted which was adjusted with trial and error.
+
+In order to account for the 100ms delay, this_thread::sleep_for(chrono::milliseconds(100)); was added before sending the steer and acceleration to the simulator.
 
 ## Code Structure
 
