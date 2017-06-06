@@ -70,6 +70,8 @@ class FG_eval {
     for (int i = 0; i < N - 2; ++i) {
         fg[0] += 200 * CppAD::pow(vars[delta_start + i + 1] - vars[delta_start + i], 2);
         fg[0] += 10 * CppAD::pow(vars[a_start + i + 1] - vars[a_start + i], 2);
+        fg[0] += CppAD::pow(vars[cte_start + i + 1] - vars[cte_start + i], 2);
+        fg[0] += CppAD::pow(vars[psi_start + i + 1] - vars[psi_start + i], 2);
     }
 
     fg[1 + x_start] = vars[x_start];
@@ -242,6 +244,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   //
   // {...} is shorthand for creating a vector, so auto x1 = {1.0,2.0}
   // creates a 2 element double vector.
+
 
   std::vector<double> x1 = {solution.x[delta_start], solution.x[a_start], (double)N};
   for (int i=0; i < N; i++) {

@@ -17,6 +17,8 @@ constexpr double pi() { return M_PI; }
 double deg2rad(double x) { return x * pi() / 180; }
 double rad2deg(double x) { return x * 180 / pi(); }
 
+const double Lf = 2.67;
+
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
 // else the empty string "" will be returned.
@@ -119,8 +121,15 @@ int main() {
           double vy = 0;
           double vpsi = 0;
 
+          double dt = 0.1;
+          double future_x = v * dt;
+          double future_y = 0;
+          double future_psi = -v * psi / Lf * dt;
+          double future_v = v + v * dt;
+
 //          state << px, py, psi, v, cte, epsi;
-          state << vx, vy, vpsi, v, cte, epsi;
+//          state << vx, vy, vpsi, v, cte, psi;
+          state << future_x, future_y, vpsi, v, cte, psi;
           std::vector<double> x1 = mpc.Solve(state, coeffs);
 
           double steer_value = x1[0];
