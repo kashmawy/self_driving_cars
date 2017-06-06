@@ -56,6 +56,7 @@ The values of N and T were picked by trial and error, with the following guideli
 A value in the middle is the best to avoid too much computation and being short sighted which was adjusted with trial and error.
 
 In order to account for the 100ms delay, this_thread::sleep_for(chrono::milliseconds(100)); was added before sending the steer and acceleration to the simulator.
+In the model predictive controller, the x position sent to the state is advanced by 100 ms by doing: future_x = v * dt (where dt is 0.1) in order to account for this.
 
 ## Code Structure
 
@@ -106,6 +107,8 @@ MPC module does the following:
         5. power(acceleration, 2)
         6. 200 * power(delta difference, 2) => Will make changes in delta happen more slowly and smoothly
         7. 10 * power(acceleration difference, 2) => Will make changes in acceleration happen more slowly and smoothly
+        8. power(psi difference, 2) => This will make changes in psi happen more slowly and smoothly
+        9. power(cte difference, 2) => This will make changes in cte happen more slowly to avoid having the car jerk around
 
     b. Copy over the state for the next N times
     c. Create all the constraints of the following:
