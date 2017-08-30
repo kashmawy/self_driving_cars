@@ -285,7 +285,7 @@ int main() {
 
           	// Update trajectory given map, vehicle, road and trajectory
           	vector<vector<double>> trajectory = {next_x_vals, next_y_vals};
-          	// planner.create_trajectory(map, road, car, trajectory);
+          	planner.create_trajectory(map, road, car, trajectory);
 
           	/* Algorithm ends here */
 
