@@ -1051,6 +1051,8 @@ lapacke_mangling.h
 /Users/kash/PycharmProjects/self_driving_cars/path_planning/src/car.cpp
 car.h
 /Users/kash/PycharmProjects/self_driving_cars/path_planning/src/car.h
+constants.h
+/Users/kash/PycharmProjects/self_driving_cars/path_planning/src/constants.h
 
 /Users/kash/PycharmProjects/self_driving_cars/path_planning/src/car.h
 vector

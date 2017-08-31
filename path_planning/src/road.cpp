@@ -26,7 +26,7 @@ bool Road::is_free_lane(Car& car, LANE lane){
   vector<Car> r_car_lane = this->get_lane_cars(lane);
   for (int i = 0; i < r_car_lane.size(); i++) {
     double distance = r_car_lane[i].get_s() - car.get_s();
-    if(distance > 0 && distance < SAFETY_DISTANCE){
+    if(distance > 0 && distance < SAFE_DISTANCE){
       return false;
     }
   }
