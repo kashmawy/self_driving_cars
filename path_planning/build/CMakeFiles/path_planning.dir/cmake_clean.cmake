@@ -4,6 +4,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/path_planning.dir/src/map.cpp.o"
   "CMakeFiles/path_planning.dir/src/road.cpp.o"
   "CMakeFiles/path_planning.dir/src/planner.cpp.o"
+  "CMakeFiles/path_planning.dir/src/utils.cpp.o"
   "path_planning.pdb"
   "path_planning"
 )

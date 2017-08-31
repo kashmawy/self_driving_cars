@@ -16,9 +16,8 @@ class Road {
 
         void update_road(vector<Car> left_lane, vector<Car> middle_lane, vector<Car> right_lane);
         vector<Car> get_lane_cars(LANE lane);
-        bool safe_lane(Car& car, LANE lane);
-        LANE lane_change_available(Car& car);
-        bool free_lane(Car& car, LANE lane);
+        bool is_free_lane(Car& car, LANE lane);
+        LANE get_free_lane(Car& car);
 
         vector<Car> left_lane;
         vector<Car> middle_lane;

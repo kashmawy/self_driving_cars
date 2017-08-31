@@ -1,5 +1,38 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
+
+### Path Planning Project
+
+The goal of this project is to plan a path for the car to drive given the map, sensor fusion data and localization data.
+The path has to be smooth, safe and does not result in any kind of penalties.
+
+### Car
+
+The car object is used to represent all cars in the traffic (including our car).
+Upon receiving the telemetry event, the location of the self driving car is updated.
+
+### Map
+
+Points are taken from a highway dataset and the spline functions are used to get the cartesian coordinates.
+
+### Road
+
+The road stores the sensor fusion data and provides the following functionality:
+
+1. is_free_lane: Returns true if the lane is free, otherwise false.
+2. get_free_lane: Returns the free lane from the three lanes.
+3. get_lane_cars: Returns all the cars in a given lane.
+
+### Planner
+
+Planner provides the following functionality:
+
+1. create_trajectory: Create a trajectory by start'ing_car, stay'ing_in_lane, decrease'ing_speed and then creating the new trajectory points.
+2. start_car: Starts the car by increasing its speed and updating the state.
+3. stay_in_lane: Stay in lane and update the state.
+4. decrease_speed: Decrease the speed and update the state.
+5. change_lane: Changes the lane to the target lane and update the state.
+6. apply_action: Stores the current (s, d) and update the state according to the movement between the current and the target lane.
    
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases).

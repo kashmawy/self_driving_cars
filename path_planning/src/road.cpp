@@ -22,44 +22,30 @@ vector<Car> Road::get_lane_cars(LANE lane) {
     }
 }
 
-bool Road::safe_lane(Car& car, LANE lane){
+bool Road::is_free_lane(Car& car, LANE lane){
   vector<Car> r_car_lane = this->get_lane_cars(lane);
-  bool safe = true;
   for (int i = 0; i < r_car_lane.size(); i++) {
     double distance = r_car_lane[i].get_s() - car.get_s();
     if(distance > 0 && distance < SAFETY_DISTANCE){
-      safe = false;
+      return false;
     }
   }
-  return safe;
+
+  return true;
 }
 
-LANE Road::lane_change_available(Car& car){
+LANE Road::get_free_lane(Car& car){
   LANE car_lane = car.get_lane();
-  LANE target_lane = car_lane;
 
   if (car_lane == LANE::LEFT || car_lane == LANE::RIGHT) {
-    if (this->free_lane(car, LANE::MIDDLE)) {
-      target_lane = LANE::MIDDLE;
+    if (this->is_free_lane(car, LANE::MIDDLE)) {
+      return LANE::MIDDLE;
     }
-  } else {
-    if (this->free_lane(car, LANE::LEFT)) {
-      target_lane = LANE::LEFT;
-    } else if (this->free_lane(car, LANE::RIGHT)) {
-      target_lane = LANE::RIGHT;
-    }
+  } else if (this->is_free_lane(car, LANE::RIGHT)) {
+      return LANE::RIGHT;
+  } else if (this->is_free_lane(car, LANE::LEFT)) {
+      return LANE::LEFT;
   }
-  return target_lane;
-}
 
-bool Road::free_lane(Car& car, LANE lane){
-  vector<Car> target_lane = this->get_lane_cars(lane);
-  bool is_free = true;
-  for (int i = 0; i < target_lane.size(); i++) {
-    double distance = std::abs(target_lane[i].get_s() - car.get_s());
-    if(distance < GUARD_DISTANCE){
-      is_free = false;
-    }
-  }
-  return is_free;
+  return car_lane;
 }
