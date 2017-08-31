@@ -1,4 +1,5 @@
 #include "car.h"
+#include "constants.h"
 
 
 Car::Car() {
@@ -18,9 +19,9 @@ Car::~Car() {
 }
 
 LANE Car::get_lane() {
-    if (this->d < 4.0) {
+    if (this->d < LEFT_LANE_D_END) {
         return LANE::LEFT;
-    } else if (this->d >= 4.0 && this->d < 8.0) {
+    } else if (this->d >= LEFT_LANE_D_END && this->d < MIDDLE_LANE_D_END) {
         return LANE::MIDDLE;
     } else {
         return LANE::RIGHT;
