@@ -24,7 +24,7 @@ class Planner {
         void create_new_trajectory_points(Map& map, vector<vector<double>>& trajectory);
         void create_trajectory(Map& map, Road& road, Car& car, vector<vector<double>>& trajectory);
 
-        void set_state(LANE current_lane, LANE target_lane);
+        void update_state(LANE current_lane, LANE target_lane);
 
         void apply_action(Car& car, LANE current_lane, LANE target_lane);
         void start_car(Car& car);
@@ -39,7 +39,7 @@ class Planner {
         vector<double> end_s;
         vector<double> start_d;
         vector<double> end_d;
-        bool new_points;
+        bool new_path;
 };
 
 #endif

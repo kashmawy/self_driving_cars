@@ -20,10 +20,10 @@ class Map {
 
         vector<double> getXY(double s, double d);
 
-        spline wp_spline_x;
-        spline wp_spline_y;
-        spline wp_spline_dx;
-        spline wp_spline_dy;
+        spline spline_x;
+        spline spline_y;
+        spline spline_dx;
+        spline spline_dy;
 };
 
 #endif

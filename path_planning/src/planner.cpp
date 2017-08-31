@@ -56,10 +56,10 @@ void Planner::create_new_trajectory_points(Map& map, vector<vector<double>>& tra
 
 void Planner::create_trajectory(Map& map, Road& road, Car& car, vector<vector<double>>& trajectory) {
     int current_points = trajectory[0].size();
-    this->new_points = false;
+    this->new_path = false;
 
     if (current_points < POINTS) {
-        this->new_points = true;
+        this->new_path = true;
 
         if (this->state == STATE::START) {
             this->start_car(car);
@@ -84,7 +84,7 @@ void Planner::create_trajectory(Map& map, Road& road, Car& car, vector<vector<do
         }
     }
 
-    if (this->new_points) {
+    if (this->new_path) {
         this->create_new_trajectory_points(map, trajectory);
     }
 }
@@ -97,8 +97,8 @@ void Planner::start_car(Car& car){
   this->start_s = {car.get_s(), car.get_v(), 0.0};
   this->end_s= {target_s, target_v, 0.0};
 
-  this->start_d = {get_lane_d(car.get_lane()), 0.0, 0.0};
-  this->end_d = {get_lane_d(car.get_lane()), 0.0, 0.0};
+  this->start_d = {get_lane_d_from_lane(car.get_lane()), 0.0, 0.0};
+  this->end_d = {get_lane_d_from_lane(car.get_lane()), 0.0, 0.0};
 
   this->apply_action(car, car.get_lane(), car.get_lane());
 }
@@ -111,9 +111,9 @@ void Planner::stay_in_lane(Car& car){
   this->start_s = {car.prev_s()[0], car.prev_s()[1], car.prev_s()[2]};
   this->end_s = {target_s, target_v, 0.0};
 
-  double target_d = get_lane_d(car.prev_d()[0]);
+  double target_d = get_lane_d_from_d(car.prev_d()[0]);
 
-  this->start_d = {get_lane_d(car.prev_d()[0]), 0.0, 0.0};
+  this->start_d = {get_lane_d_from_d(car.prev_d()[0]), 0.0, 0.0};
   this->end_d = {target_d, 0.0, 0.0};
 
   this->apply_action(car, get_lane(car.prev_d()[0]), get_lane(car.prev_d()[0]));
@@ -121,16 +121,16 @@ void Planner::stay_in_lane(Car& car){
 
 void Planner::decrease_speed(Car& car){
   this->n = CYCLES * POINTS;
-  this->new_points = true;
+  this->new_path = true;
   double target_v = max(car.prev_s()[1] * 0.9, SPEED_LIMIT/2.0);
   double target_s = car.prev_s()[0] + n * AT * target_v;
 
   this->start_s = {car.prev_s()[0], car.prev_s()[1], car.prev_s()[2]};
   this->end_s = {target_s, target_v, 0.0};
 
-  double target_d = get_lane_d(car.prev_d()[0]);
+  double target_d = get_lane_d_from_d(car.prev_d()[0]);
 
-  this->start_d = {get_lane_d(car.prev_d()[0]), 0.0, 0.0};
+  this->start_d = {get_lane_d_from_d(car.prev_d()[0]), 0.0, 0.0};
   this->end_d = {target_d, 0.0, 0.0};
 
   this->apply_action(car, get_lane(car.prev_d()[0]), get_lane(car.prev_d()[0]));
@@ -138,16 +138,16 @@ void Planner::decrease_speed(Car& car){
 
 void Planner::change_lane(Car& car, LANE target_lane){
   this->n = CYCLES * POINTS;
-  this->new_points = true;
+  this->new_path = true;
   double target_v = car.prev_s()[1];
   double target_s = car.prev_s()[0] + n * AT * target_v;
 
   this->start_s = {car.prev_s()[0], car.prev_s()[1], car.prev_s()[2]};
   this->end_s = {target_s, target_v, 0.0};
 
-  double target_d = get_lane_d(target_lane);
+  double target_d = get_lane_d_from_lane(target_lane);
 
-  this->start_d = {get_lane_d(car.prev_d()[0]), 0.0, 0.0};
+  this->start_d = {get_lane_d_from_d(car.prev_d()[0]), 0.0, 0.0};
   this->end_d = {target_d, 0.0, 0.0};
 
   this->apply_action(car, get_lane(car.prev_d()[0]), get_lane(target_d));
@@ -156,10 +156,10 @@ void Planner::change_lane(Car& car, LANE target_lane){
 void Planner::apply_action(Car& car, LANE current_lane, LANE target_lane){
   car.set_previous_s(this->end_s);
   car.set_previous_d(this->end_d);
-  this->set_state(current_lane, target_lane);
+  this->update_state(current_lane, target_lane);
 }
 
-void Planner::set_state(LANE current_lane, LANE target_lane){
+void Planner::update_state(LANE current_lane, LANE target_lane){
   if (current_lane == target_lane){
     this->state = STATE::KEEP_LANE;
   } else {
