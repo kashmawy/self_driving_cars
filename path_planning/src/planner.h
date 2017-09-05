@@ -5,6 +5,7 @@
 #include "Eigen-3.3/Eigen/QR"
 #include "Eigen-3.3/Eigen/Dense"
 #include <vector>
+#include <iostream>
 
 #include "car.h"
 #include "map.h"

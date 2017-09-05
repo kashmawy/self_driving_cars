@@ -33,6 +33,38 @@ Planner provides the following functionality:
 4. decrease_speed: Decrease the speed and update the state.
 5. change_lane: Changes the lane to the target lane and update the state.
 6. apply_action: Stores the current (s, d) and update the state according to the movement between the current and the target lane.
+
+### State Machine
+
+![State Machine](StateMachine.png)
+
+We have four states:
+
+1. Start Car: The initial state.
+2. Stay in lane: The condition to be in this state when the current lane is empty.
+3. Decrease speed: The condition to be in this state when all lanes are busy.
+4. Change Lane: The condition to be in this state when current lane is busy but other lanes are free.
+
+A lane is empty if at there is no car in it from [car_s - 20, car_s + 40] otherwise it is busy.
+
+### Parameters selection
+
+The following are the parameters used:
+
+Safe front distance: 40m.
+Safe back distance: 20m.
+Road Width: 12m [0-4 left lane, 4 - 8 middle lane, 8 - 12 right lane].
+Speed limit: 20m/s
+
+### Trajectory Generation Strategy
+
+Given a start S and end S from the previous states, create a jerk minimized path using JMT.
+Given a start D and end D from the previous states, create a jerk minimized path using JMT.
+
+JMT takes start and end points and the duration and creates an output array of length 6 where each value correspond to a coefficent coefficient in the polynomial.
+
+s(t) = a_0 + a_1 * t + a_2 * t^2 + a_3 * t^3 + a_4 * t^4 + a_5 * t^5
+
    
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases).
