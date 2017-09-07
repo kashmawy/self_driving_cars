@@ -20,7 +20,7 @@ Run the following command to run the project:
 python3 main.py
 ```
 
-### Code Parts
+### Semantic Segmentation Steps
 
 1. Load VGG
 2. Create a fully convolution network from VGG by doing the following changes:
