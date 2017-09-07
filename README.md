@@ -15,6 +15,7 @@ Projects for Self Driving Cars:
 11. [Object localization using particle filter](localization_particle_filter/): Object localization using particle filter.
 12. [PID Controller](pid_controller/): PID Controller for the vehicle.
 13. [Model Predictive Controller](model_predictive_controller/): Model Predictive Controller for the vehicle with simulation that shows the predicted path and the ground truth.
+14. [Semantic Segmenation](semantic_segmentation/): A fully convolutional network from VGG with skip layers is developed for semantic segmenation to identify roads.
 
 Other Misc Projects in the same area:
 
