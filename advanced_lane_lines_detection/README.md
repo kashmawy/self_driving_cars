@@ -2,11 +2,11 @@
 
 ---
 
-**Advanced Lane Finding Project**
+** Advanced Lane Finding Project**
 
-###Camera Calibration
+### Camera Calibration
 
-####1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
+### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
 
 The code for this step is in solutions.py in both methods: get_points() and cal_undistort()
 
@@ -24,7 +24,7 @@ The following shows an example of a road image before and after calibration:
 
 ![Image Calibrated](solutions/test_1_original_vs_calibrated.png)
 
-####2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
+#### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
 Current Try:
 
@@ -62,7 +62,7 @@ or (hsv_threshold of 1)
 The following image below is the result of applying this:
 ![Threshold](solutions/threshold.png)
 
-####3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
+#### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
 The code for this step is in solution.py in transform.
 transform takes source and destination points and gets the transformation matrix and then transforms the image.
@@ -88,7 +88,7 @@ By applying the transform method with these source and destination points, we ch
 
 ![Bird Eye](solutions/bird_eye.png)
 
-####4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
+#### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
 The following histogram shows the sum of the pixel values over the lower half of the bird eye view, and it shows two spikes where the lanes are at.
 
@@ -106,7 +106,7 @@ The picture below shows the boxes and the lines through the lanes:
 
 ![Boxes](solutions/f_boxes.png)
 
-####5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
+#### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
 in lane.py, the method curvature() calculates the curvature of the lane.
 The curvature of the line is computed as (1 + first_order_derivative_of_line_fit(y)^2)^1.5 / absolute(second_order_derivate_of_line_fit(y)) where y is the image height.
@@ -120,7 +120,7 @@ The distance from the center is computed as:
 
 ![Lanes](solutions/f_lanes.png)
 
-####6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
+#### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
 In solution.py overlay_lane(), the image is given, the line fitting the left lane, the line fitting the right lane and a top down transform.
 overlay_lane() creates a line on the left and a line on the right and overlays between the lane with a green shade.
@@ -131,9 +131,9 @@ This can be seen in the picture below:
 
 ---
 
-###Pipeline (video)
+### Pipeline (video)
 
-####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
+#### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
 The pipeline is created in def convert_video() by calling full_pipeline on each image in the video which performs the operations described above.
 Here is the video output:
@@ -142,9 +142,9 @@ Here's a [link to my video result](https://youtu.be/OHRQfqGtE8I)
 
 ---
 
-###Discussion
+### Discussion
 
-####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 In the challenge video, my pipeline shows some issues: some of the images has incorrect lanes detected.
 I noticed that shadow (from a bridge) particularly confuses the pipeline.
