@@ -20,6 +20,6 @@ Projects for Self Driving Cars:
 
 Other Misc Projects in the same area:
 
-1. [Transfer Learning](transfer_learning/)
-2. [Traffic Classification using Keras](traffic_sign_classifier_with_keras/)
-3. [Alexnet Feature Extraction](alexnet_feature_extraction/)
+1. [Transfer Learning](https://github.com/kashmawy/transfer_learning)
+2. [Traffic Classification using Keras](https://github.com/kashmawy/traffic_sign_classifier_with_keras)
+3. [Alexnet Feature Extraction](https://github.com/kashmawy/alexnet_feature_extraction)
