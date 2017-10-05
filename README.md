@@ -12,10 +12,10 @@ Projects for Self Driving Cars:
 8. [Object localization using extended kalman filter](https://github.com/kashmawy/localization_extended_kalman_filter): Object localization using data from laser and radar using extended kalman filter.
 9. [Object localization using unscented kalman filter](https://github.com/kashmawy/localization_unscented_kalman_filter): Object localization using data from laser and radar using unscented kalman filter to allow for more complex motion like turning.
 10. [Lidar topview with 3D Bounding Boxes from Kitti dataset](https://github.com/kashmawy/kitti_lidar_topview_3D_BB): Lidar topview with 3D Bounding Boxes.
-11. [Object localization using particle filter](localization_particle_filter/): Object localization using particle filter.
-12. [PID Controller](pid_controller/): PID Controller for the vehicle.
-13. [Model Predictive Controller](model_predictive_controller/): Model Predictive Controller for the vehicle with simulation that shows the predicted path and the ground truth.
-14. [Semantic Segmenation](semantic_segmentation/): A fully convolutional network from VGG with skip layers is developed for semantic segmenation to identify roads.
+11. [Object localization using particle filter](https://github.com/kashmawy/localization_particle_filter): Object localization using particle filter.
+12. [PID Controller](https://github.com/kashmawy/pid_controller): PID Controller for the vehicle.
+13. [Model Predictive Controller](https://github.com/kashmawy/model_predictive_controller): Model Predictive Controller for the vehicle with simulation that shows the predicted path and the ground truth.
+14. [Semantic Segmenation](https://github.com/kashmawy/semantic_segmentation): A fully convolutional network from VGG with skip layers is developed for semantic segmenation to identify roads.
 
 Other Misc Projects in the same area:
 
