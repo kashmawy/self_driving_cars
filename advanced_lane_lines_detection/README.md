@@ -1,9 +1,3 @@
-##Solution
-
----
-
-** Advanced Lane Finding Project**
-
 ### Camera Calibration
 
 ### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.

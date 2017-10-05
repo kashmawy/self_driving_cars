@@ -2,7 +2,7 @@
 
 Projects for Self Driving Cars:
 
-1. [Lane Lines Detection](lane_lines_detection/): Using computer vision to detect the location of lane lines in a video.
+1. [Lane Lines Detection](https://github.com/kashmawy/lane_detection): Using computer vision to detect the location of lane lines in a video.
 2. [Advanced Lane Detection](https://github.com/kashmawy/advanced_line_detection): Using advanced concepts from computer vision to detect the location of lane lines and distance from center in a more percise fashion in a video.
 3. [Traffic Sign Classification with Deep Learning](https://github.com/kashmawy/traffic_sign_classifier): Using Convolutional Neural Network to classify traffic signs in images.
 4. [Driving behavior Cloning with Deep Learning](behavior_cloning_deep_learning/): Using Convolutional Neural Network to clone driving behavior in a simulator and drive autonomously in a simulator.
