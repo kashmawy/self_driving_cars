@@ -17,6 +17,7 @@ Projects for Self Driving Cars:
 13. [Model Predictive Controller](https://github.com/kashmawy/model_predictive_controller): Model Predictive Controller for the vehicle with simulation that shows the predicted path and the ground truth.
 14. [Semantic Segmenation](https://github.com/kashmawy/semantic_segmentation): A fully convolutional network from VGG with skip layers is developed for semantic segmenation to identify roads.
 15. [Path Planning](https://github.com/kashmawy/path_planning): Path planning given a map, sensior fusion data and localization data.
+16. [Self Driving Car](https://github.com/kashmawy/CarND-Capstone): Self driving car in ROS with traffic sign classifier, path planning and PID controller.
 
 Other Misc Projects in the same area:
 
